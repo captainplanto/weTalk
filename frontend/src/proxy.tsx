@@ -1,0 +1,23 @@
+
+import { createProxyMiddleware} from "http-proxy-middleware";
+
+
+
+export const proxyApp = (app: any)=>{
+app.use('/api', createProxyMiddleware({
+      target: 'http://localhost:5000',
+      changeOrigin: true,
+    })
+  );
+
+
+
+
+
+}
+
+
+
+
+
+
