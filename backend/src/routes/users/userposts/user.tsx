@@ -6,8 +6,7 @@ export const router = express.Router();
 //Register User using has, bcrypt && salt
 
 export const registerUser = async (req: Request, res: Response) => {
-  const { firstName, lastName, username, dob, email, password } =
-    req.body.firstTimeUser;
+  const { firstName, lastName, username, dob, email, password } = req.body.firstTimeUser;
   const hashPassword = await bcrypt.hash(password, 16);
   const newUser = new User({
     firstName,
@@ -42,12 +41,14 @@ export const registerUser = async (req: Request, res: Response) => {
   }
 };
 
-export const signInUser = async (req: Request, res: Response) => {
+export const signInUser = async (req: Request, res: Response, next:any) => {
   const { username, password } = req.body.firstTimeUser;
   const user = await User.findOne({ username: username });
   const validateUser = await bcrypt.compare(password, user.password);
+  console.log(validateUser)
+  console.log(user)
   try {
-    if (validateUser) {
+    if (validateUser && user) {
       const sessionUser = {
         id: user._id,
         username: user.username,
@@ -61,11 +62,12 @@ export const signInUser = async (req: Request, res: Response) => {
         data: sessionUser,
         success: true,
       });
-    } else {
+    } else if (!validateUser || !user){
       return res.status(400).json({
         message: "User does not exist, Please sign up",
         success: false,
       });
+     
     }
   } catch (e) {
     return res.status(500).json({
@@ -73,6 +75,7 @@ export const signInUser = async (req: Request, res: Response) => {
       success: false,
     });
   }
+ 
 };
 
 export const logOutUser = async (req: Request, res: Response, next: any) => {
@@ -123,8 +126,6 @@ export const registerUserInfo = async (req: Request, res: Response) => {
   }
 };
 
-
-
 export const UserProfileJpg = async (req: Request, res: Response) => {
   const userInSession = req.params.currentUser;
   console.log(userInSession);
@@ -136,7 +137,7 @@ export const UserProfileJpg = async (req: Request, res: Response) => {
       { avatar: image }
     );
     if (uploadAvaterImage.acknowledged) {
-      const findUser = await User.findOne({userInSession})
+      const findUser = await User.findOne({ userInSession });
       try {
         res.status(200).json({
           message: "user profile info",

@@ -3,7 +3,7 @@ import Topic from "../../../models/topic.model";
 import Comment from "../../../models/comment.model";
 import { TOPIC_MODEL, TOPIC_TOPIC_MODEL } from "../../../queries/db.populate";
 
-export const isAuthor = async (req: Request, res: Response, next: any) => {
+/*export const isAuthor = async (req: Request, res: Response, next: any) => {
   const id = req.params.id;
   const topic = await Topic.findById(id);
   try {
@@ -19,6 +19,7 @@ export const isAuthor = async (req: Request, res: Response, next: any) => {
   }
 };
 
+*/
 export const createTopic = async (req: Request, res: Response) => {
   const topic = req.body.createTopic;
   const userTopic = new Topic({ topic: topic });
@@ -52,7 +53,7 @@ export const getTopic = async (req: Request, res: Response) => {
   try {
     if (dbTopics && dbTopics.length > 0) {
       res.status(200).json({
-        message: "All saved comments successfully fetched from database",
+        message: "All saved topics successfully fetched from database",
         success: true,
         data: dbTopics,
       });
@@ -116,50 +117,44 @@ export const deleteUserTopic = async (req: Request, res: Response) => {
 export const createReplyToTopic = async (req: Request, res: Response) => {
   const topicToReplyToId = req.params.id;
   const reply = req.body.TopicResponse;
-  const createReply = new Comment({ reply: reply });
-  createReply.author = req.session.user.id;
-
-  try {
-    if (req.session.user.id) {
+  const session = req.session.user;
+  if (session) {
+    try {
+      const createReply = new Comment({ reply: reply });
+      createReply.author = session.id;
       const saveReply = await createReply.save();
       const saveReplyToTopic = await Topic.findByIdAndUpdate(
         topicToReplyToId,
         { $push: { comments: createReply } },
         { upsert: true }
       );
-
       return res.status(200).json({
         message: "Reply successfully created",
         success: true,
         data: saveReplyToTopic,
       });
-    } else {
-      res.status(202).json({
-        message: "Log in or create account to comment or reply to a post",
-        success: true,
-
+    } catch (e) {
+      res.status(500).json({
+        message: "Reply to post cannot be created into database",
+        e,
+        success: false,
       });
-      console.log('error')
     }
-  } catch (e) {
-    res.status(500).json({
-      message: "Reply to post cannot be created into database",
-      e,
-      success: false,
+  } else {
+    res.status(400).json({
+      message: "Log in or create account to comment or reply to a post",
+      success: true,
     });
+    console.log("error");
   }
 };
-
-
-
-
 
 export const editUserComment = async (req: Request, res: Response) => {
   const id = req.params.id;
   const comment = req.body.createTopic;
   const editedComment = await Comment.findByIdAndUpdate(
     id,
-    { $set: { reply:comment} },
+    { $set: { reply: comment } },
     { runValidators: true }
   );
 
@@ -177,43 +172,6 @@ export const editUserComment = async (req: Request, res: Response) => {
     });
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 export const getReplyToTopic = async (req: Request, res: Response) => {
   const id = req.params.id;
