@@ -1,29 +1,39 @@
-import React, { FC } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/home";
 import { ToggleComponent } from "./components/Toggle.component";
-import { useAppSelector } from "./redux/hooks";
+import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import RegisterUser from "./pages/register";
 import LoginUser from "./pages/login";
-import UserProfile from "./pages/profile";
+
 import NavBarComponent from "./components/Navbar.component";
 import AllTopics from "./pages/alltopic";
 import NewTopic from "./pages/newtopic";
 import TopicComment from "./pages/topiccomment";
-import { ITopicReplyButton } from "./types/type";
-import UserProfileComponent from "./pages/profile";
+
 import ProfileComponent from "./components/Profile.component";
+import { ToggleSwitch } from "./redux/features/topics";
 
 const App = () => {
-  const { toggleMode } = useAppSelector((state) => state.topic);
+  const [mode, setMode] = useState<boolean>(false);
+
+
+  const toggleValue = localStorage.getItem("theme");
+  console.log(toggleValue, 'from local')
+
+  
+
+  
+
 
   return (
     <AppContainer
       style={{
-        backgroundColor: !toggleMode ? "rgb(36, 52, 71)" : "",
+        backgroundColor: mode ? "rgb(36, 52, 71)" : "",
+
         minHeight: "100vh",
       }}
     >
@@ -42,7 +52,7 @@ const App = () => {
         <Route path="/logout" element={<LoginUser />} />
         <Route path="/register" element={<RegisterUser />} />
         <Route path="/profile" element={<ProfileComponent />} />
-        <Route path="/topiccomment" element={<TopicComment  />} />
+        <Route path="/topiccomment" element={<TopicComment />} />
       </Routes>
     </AppContainer>
   );

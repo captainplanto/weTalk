@@ -38,6 +38,8 @@ const NewTopicComponent = () => {
         toast.success("Topic created successfully");
         dispatch(createTopic(""));
         return navigate("/");
+      } else {
+        toast.error("Something went wrong, please check input and make sure you are logged in");
       }
       if (makeTopic.status === 202) {
         return toast.error("Log in or create account to create a topic");
@@ -77,10 +79,7 @@ const NewTopicComponent = () => {
 
 export default NewTopicComponent;
 const Container = styled.div`
-
   .post {
     text-align: center;
   }
 `;
-
-

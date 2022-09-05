@@ -1,6 +1,6 @@
-import React, { FC, useState } from "react";
+import React, { FC} from "react";
 import { toast } from "react-toastify";
-import { dbReplyTopic, dbTopics } from "../redux/features/topics";
+import { dbReplyTopic, dbTopics, ReplyToTopicBox } from "../redux/features/topics";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { ITopicEditedButton } from "../types/type";
 import CustomButtonComponent from "./CustomButton.component";
@@ -12,9 +12,8 @@ const TopicEditedButtonComponent: FC<ITopicEditedButton> = ({
   topicOwner,
   topicCommentID,
 }) => {
-  const { newtopic } = useAppSelector((state) => state.topic);
-  const dispatch = useAppDispatch();
-   const [openUpdateTextBox, setopenUpdateTextBox] = useState(true);
+  const { newtopic, openReplyToBox  } = useAppSelector((state) => state.topic);
+  const dispatch = useAppDispatch(); 
   const sessionId = localStorage.getItem("item");
   const sessionUser = sessionId ? JSON.parse(sessionId) : "";
   const currentUser = sessionUser.username;
@@ -36,8 +35,7 @@ const TopicEditedButtonComponent: FC<ITopicEditedButton> = ({
               });
 
               if (editTopicRequest.status === 200) {
-             
-            
+              dispatch(ReplyToTopicBox(!openReplyToBox))
                 const fetchTopic = await fetch("/api/gettopic", {
                   method: "GET",
                 });
@@ -55,7 +53,6 @@ const TopicEditedButtonComponent: FC<ITopicEditedButton> = ({
             break;
         }
       } else if (!showTopicEditButton) {
-        console.log("editcomment");
         switch (type) {
           case "EDIT_COMMENT":
             try {

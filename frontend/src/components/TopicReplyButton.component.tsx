@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+
 import React, { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -18,7 +18,8 @@ const TopicReplyButtonComponent: FC<ITopicReplyButton> = ({
   const dispatch = useAppDispatch();
     const navigate = useNavigate();
   const ReplyToTopicOrAddComment = async (type: "GETTOPICANDCOMMENT" | "REPLYTOTOPIC") => {
-    if (!showTopicReplyButton) {
+   
+    if (showTopicReplyButton === false) {
       switch (type) {
         case "GETTOPICANDCOMMENT":
           try {
@@ -34,8 +35,9 @@ const TopicReplyButtonComponent: FC<ITopicReplyButton> = ({
             if (fetchTopicAndComment.status === 200) {
                   navigate("/topiccomment");
               const fetchReplyToTopicResponse = await fetchTopicAndComment.json();
-              dispatch(dbReplyTopic(fetchReplyToTopicResponse.data));
-            } else {
+             dispatch(dbReplyTopic(fetchReplyToTopicResponse.data));
+            } 
+            else {
               console.log("error here");
             }
           } catch (err) {}
@@ -43,7 +45,7 @@ const TopicReplyButtonComponent: FC<ITopicReplyButton> = ({
         default:
           break;
       }
-    } else if (showTopicReplyButton) {
+    } else if (showTopicReplyButton === true) {
       switch (type) {
         case "REPLYTOTOPIC":
           try {
@@ -52,6 +54,7 @@ const TopicReplyButtonComponent: FC<ITopicReplyButton> = ({
               method: "POST",
               headers: {
                 Accept: "application/json",
+               // credentials : "include",
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({ TopicResponse: replyTopic }),
@@ -59,19 +62,15 @@ const TopicReplyButtonComponent: FC<ITopicReplyButton> = ({
 
             if (replyTopicRequest.status === 200) {
               toast.success("You successfully reply to this topic");
-              const fetchReplyToTopic = await fetch(
-                `/api/gettopicreply/${id}`,
-                {
+              const fetchReplyToTopic = await fetch(`/api/gettopicreply/${id}`,{
                   method: "POST",
                 }
               );
               const fetchReplyToTopicResponse = await fetchReplyToTopic.json();
               dispatch(dbReplyTopic(fetchReplyToTopicResponse.data));
             }
-            if (replyTopicRequest.status === 400) {
-              toast.error(
-                "You cannot reply to this topic at the moment, try again later"
-              );
+            else if (replyTopicRequest.status === 400) {
+              toast.error("Please login or register to perform this action");
             }
           } catch (error) {}
             break;
@@ -104,46 +103,4 @@ export default TopicReplyButtonComponent;
 
 // I am chaining the replyto topic and fetch topic and comments button togehter here...This is to make the code readable and easy editing
 
-/*
 
-
-
-
- try {
-      const replyTopicRequest = await fetch(`/api/replytotopic/${id}`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ TopicResponse: replyTopic }),
-      });
-
-      if (replyTopicRequest.status === 200) {
-           toast.success("You successfully reply to this topic");
-        const fetchReplyToTopic = await fetch(`/api/gettopicreply/${id}`, {
-          method: "GET",
-        });
-        const fetchReplyToTopicResponse = await fetchReplyToTopic.json();
-        console.log(fetchReplyToTopicResponse.data);
-        dispatch(dbReplyTopic(fetchReplyToTopicResponse.data));
-     
-      }
-      if (replyTopicRequest.status === 400) {
-        toast.error(
-          "You cannot reply to this topic at the moment, try again later"
-        );
-      }
-    } catch (error) {
-
-    }
-     
-  };
-
-
-
-
-
-
-
-*/

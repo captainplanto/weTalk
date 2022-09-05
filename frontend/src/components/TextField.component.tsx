@@ -1,5 +1,6 @@
 import React, { FC, ReactNode } from "react";
 import styled from "styled-components";
+import { useAppSelector } from "../redux/hooks";
 import PaperBackgroundComponent from "./Comments/PaperBackground.component";
 
 interface IInput {
@@ -15,7 +16,6 @@ interface IInput {
   outline?: string;
   children?: ReactNode;
   defaultValue?: string;
- 
 }
 
 const TextFieldComponent: FC<IInput> = ({
@@ -24,39 +24,44 @@ const TextFieldComponent: FC<IInput> = ({
   onChange,
   name,
   outline,
-
   style,
   children,
   defaultValue,
-
   ...props
 }) => {
+  const { openReplyToBox } = useAppSelector((state) => state.topic);
   return (
-    <Outer>
-      <PaperBackgroundComponent className='padding'>
-        <Container>
-          <div>
-            <textarea
-              value={value}
-              style={{ ...style }}
-              onChange={onChange}
-              defaultValue={defaultValue}
-              name={name}
-            />
-          </div>
-          <div>{children}</div>
-        </Container>
-      </PaperBackgroundComponent>
-    </Outer>
+    <>
+      {openReplyToBox ? (
+        <Outer>
+          <PaperBackgroundComponent className="padding">
+            <Container>
+              <div>
+                <textarea
+                  value={value}
+                  style={{ ...style }}
+                  onChange={onChange}
+                  defaultValue={defaultValue}
+                  name={name}
+                />
+              </div>
+              <div>{children}</div>
+            </Container>
+          </PaperBackgroundComponent>
+        </Outer>
+      ) : (
+        ""
+      )}
+    </>
   );
 };
 
 export default TextFieldComponent;
-const Outer =styled.div`
-.padding{
-  padding: 1rem 0 1rem 0;
-}
-`
+const Outer = styled.div`
+  .padding {
+    padding: 1rem 0 1rem 0;
+  }
+`;
 const Container = styled.div`
   display: flex;
   justify-content: center;
@@ -86,4 +91,3 @@ const Container = styled.div`
     gap: 0px;
   }
 `;
-

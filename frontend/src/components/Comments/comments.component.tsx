@@ -1,7 +1,7 @@
-import id from "date-fns/esm/locale/id";
-import React, { useEffect } from "react";
+
+import React from "react";
 import styled from "styled-components";
-import { dbReplyTopic, replyToTopic } from "../../redux/features/topics";
+import { replyToTopic} from "../../redux/features/topics";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { IComment, ITopic } from "../../types/type";
 import { convertDate } from "../../utils/date";
@@ -17,18 +17,13 @@ const CommentComponent = () => {
   const sessionId = localStorage.getItem("item");
   const sessionUser = sessionId ? JSON.parse(sessionId) : "";
   const userPin = sessionUser.id;
-  const handleReplyChange = (
-    e:
-      | React.ChangeEvent<HTMLTextAreaElement>
-      | React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleReplyChange = (e: React.ChangeEvent<HTMLTextAreaElement>| React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     dispatch(replyToTopic(e.target.value));
   };
 
   if (databaseReplyTopic) {
-    const { topic, comments, createdAt, author, username, _id } =
-      databaseReplyTopic as ITopic;
+    const { topic, comments, createdAt, author, username, _id } = databaseReplyTopic as ITopic;
     const topicID = _id;
     return (
       <div>
@@ -38,16 +33,18 @@ const CommentComponent = () => {
           username={author?.username ? author.username : ""}
           timestamp={`${convertDate(createdAt)} ago`}
           remove={userPin === author?._id ? "Delete" : ""}
-          reply={userPin === author?._id ? "Edit" : ''}
-          showTopicDeleteButton={true} showTopicReplyButton={false} topicOwner={username}    
+          reply={userPin === author?._id ? "Edit" : ""}
+          showTopicDeleteButton={true}
+          showTopicReplyButton={false}
+          topicOwner={username}
           showTopicEditButton={true}
-            />
-        
+          isVoteOnTopic={true}
+        />
+
         {comments && comments.length > 0 ? (
-          comments.map(({ _id, reply, votes, author,  }: IComment, index) => (
+          comments.map(({ _id, reply, votes, author }: IComment, index) => (
             <CommentContainer key={index}>
               <CardComponent
-                //className="comment_width"
                 style={{ marginBottom: "5rem", background: "red" }}
                 id={_id}
                 topic={reply}
@@ -55,8 +52,12 @@ const CommentComponent = () => {
                 remove={userPin === author?._id ? "Delete" : ""}
                 timestamp={`${convertDate(createdAt)} ago`}
                 showTopicDeleteButton={false}
-                topicCommentID={topicID} showTopicReplyButton={false}  
-               topicOwner={author?.username}  showTopicEditButton={false} />    
+                topicCommentID={topicID}
+                showTopicReplyButton={false}
+                topicOwner={author?.username}
+                showTopicEditButton={false}
+                isVoteOnTopic={false}
+              />
             </CommentContainer>
           ))
         ) : (
@@ -67,7 +68,6 @@ const CommentComponent = () => {
                 comment.
               </h4>
             </PaperBackgroundComponent>
-           
           </>
         )}
 
@@ -76,7 +76,9 @@ const CommentComponent = () => {
           value={replyTopic}
           onChange={handleReplyChange}
         >
-      <TopicReplyButtonComponent id={_id} showTopicReplyButton={true}>SEND</TopicReplyButtonComponent>
+          <TopicReplyButtonComponent id={_id} showTopicReplyButton={true}>
+            SEND
+          </TopicReplyButtonComponent>
         </TextFieldComponent>
       </div>
     );

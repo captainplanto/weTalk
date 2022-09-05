@@ -5,9 +5,14 @@ import styled from "styled-components";
 import { customId } from "../App";
 
 interface IVote {
-  id: Schema.Types.ObjectId;
+  //topicId: Schema.Types.ObjectId;
+  //commentId:Schema.Types.ObjectId;
+  id:Schema.Types.ObjectId;
+  isVoteOnTopic: boolean;
 }
-const VoteComponent: FC<IVote> = ({ id }) => {
+//topicId, commentId
+const VoteComponent: FC<IVote> = ({ id, isVoteOnTopic }) => {
+  //const [isVoteOnTopic, setIsVoteOnTopic] =useState<boolean>(true);
   const sessionId = localStorage.getItem("item");
   const sessionUser = sessionId ? JSON.parse(sessionId) : "";
   const currentUser: Schema.Types.ObjectId = sessionUser.id;
@@ -20,16 +25,15 @@ const VoteComponent: FC<IVote> = ({ id }) => {
       });
       const upVoteResponse = await getVotes.json();
       setVotes(upVoteResponse.data.votes);
-console.log(upVoteResponse.data.votes)
     };
     myVotes();
-  }, []);
+  }, [id]);
 
   const renderVotes = useCallback(() => {
     const VoteHandler = async (type: "add" | "remove") => {
-      switch (type) {
-        case "add":
-          if (currentUser) {
+      if (currentUser && isVoteOnTopic === true) {
+        switch (type) {
+          case "add":
             const upVote = await fetch(`/api/upvotetopic/${id}`, {
               method: "POST",
               headers: {
@@ -55,43 +59,106 @@ console.log(upVoteResponse.data.votes)
                 "Please login or register to vote and downvote this topic"
               );
             }
-          } else {
-          toast.error("Please login or register to vote and downvote this topic");
-          }
-          break;
+            break;
 
-        case "remove":
-          const downVote = await fetch(`/api/downvotetopic/${id}`, {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ increaseVote: currentUser }),
-          });
-          if (downVote.status === 200) {
-            const downVote = await fetch(`/api/get/vote/${id}`, {
-              method: "GET",
+          case "remove":
+            const downVote = await fetch(`/api/downvotetopic/${id}`, {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ increaseVote: currentUser }),
             });
-            const downVoteResponse = await downVote.json();
-            setVotes(downVoteResponse.data.votes);
-            toast.error("You have downvoted this topic");
-          }
+            if (downVote.status === 200) {
+              const downVote = await fetch(`/api/get/vote/${id}`, {
+                method: "GET",
+              });
+              const downVoteResponse = await downVote.json();
+              setVotes(downVoteResponse.data.votes);
+              toast.error("You have downvoted this topic");
+            }
 
-          if (downVote.status === 300) {
-            return toast.error("You down voted this topic already.", {
-              toastId: customId,
+            if (downVote.status === 300) {
+              return toast.error("You down voted this topic already.", {
+                toastId: customId,
+              });
+            }
+            if (downVote.status === 400) {
+              toast.error(
+                "vote cannot be downvoted at this time, try again later"
+              );
+            }
+            break;
+
+          default:
+            break;
+        }
+      } else if (currentUser && isVoteOnTopic === false) {
+        switch (type) {
+          case "add":
+            const upVote = await fetch(`/api/upvote/comment/${id}`, {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ increaseVote: currentUser }),
             });
-          }
-          if (downVote.status === 400) {
-            toast.error(
-              "vote cannot be downvoted at this time, try again later"
-            );
-          }
-          break;
 
-        default:
-          break;
+            if (upVote.status === 200) {
+              const getVotes = await fetch(`/api/get/vote/on/comment/${id}`, {
+                method: "GET",
+              });
+              const upVoteResponse = await getVotes.json();
+              setVotes(upVoteResponse.data.votes);
+              toast.success("vote added");
+            }
+            if (upVote.status === 300) {
+              toast.error("You liked this comment already.");
+            }
+            if (upVote.status === 400) {
+              toast.error(
+                "Please login or register to vote and downvote this comment"
+              );
+            }
+            break;
+
+          case "remove":
+            const downVote = await fetch(`/api/downvote/comment/${id}`, {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ increaseVote: currentUser }),
+            });
+            if (downVote.status === 200) {
+              const downVote = await fetch(`/api/get/vote/on/comment/${id}`, {
+                method: "GET",
+              });
+              const downVoteResponse = await downVote.json();
+              setVotes(downVoteResponse.data.votes);
+              toast.error("You have downvoted this comment");
+            }
+
+            if (downVote.status === 300) {
+              return toast.error("You down voted this comment already.", {
+                toastId: customId,
+              });
+            }
+            if (downVote.status === 400) {
+              toast.error(
+                "vote cannot be downvoted at this time, try again later"
+              );
+            }
+            break;
+
+          default:
+            break;
+        }
+      } else {
+        toast.error("Please login or register to vote and downvote");
       }
     };
 
@@ -108,7 +175,7 @@ console.log(upVoteResponse.data.votes)
         </div>
       </Vote>
     );
-  }, [currentUser, id, votes]);
+  }, [currentUser, id, isVoteOnTopic, votes]);
 
   return <> {renderVotes()}</>;
 };
@@ -140,4 +207,3 @@ const Vote = styled.div`
     padding: 3px 0 3px 0;
   }
 `;
-

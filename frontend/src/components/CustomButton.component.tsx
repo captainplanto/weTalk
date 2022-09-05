@@ -3,15 +3,17 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 interface IButton {
-  style?: object;
+  style?: any;
   type?: "submit" | "reset" | "button";
   children: ReactNode;
   link?: string;
-  //id:any,
   onClick?: (e: any) => void;
   disabled?: boolean;
   onSubmit?: (e: any) => void;
-  handleSubmit?:(e:any) =>void;
+  onMouseOver?: (e: any) => void;
+  onMouseOut?: (e: any) => void;
+  className?: any;
+  handleSubmit?: (e: any) => void;
 }
 
 const CustomButtonComponent: FC<IButton> = ({
@@ -19,11 +21,13 @@ const CustomButtonComponent: FC<IButton> = ({
   type,
   children,
   onClick,
-  //id,
   link,
   disabled,
   onSubmit,
+  className,
   handleSubmit,
+  onMouseOver,
+  onMouseOut,
 }) => {
   if (link) {
     return (
@@ -34,6 +38,9 @@ const CustomButtonComponent: FC<IButton> = ({
           onClick={onClick}
           disabled={disabled}
           onSubmit={handleSubmit}
+          onMouseOver={onMouseOver}
+          onMouseOut={onMouseOut}
+          className={className}
         >
           {children}
         </CustomButton>
@@ -47,6 +54,8 @@ const CustomButtonComponent: FC<IButton> = ({
       style={style && style}
       onClick={onClick}
       disabled={disabled}
+      onMouseOver={onMouseOver}
+      onMouseOut={onMouseOut}
     >
       {children}
     </CustomButton>

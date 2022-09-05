@@ -13,6 +13,7 @@ import TopicReplyButtonComponent from "./TopicReplyButton.component";
 import DropdownComponent from "./Dropdown.Component";
 import { Dropdown } from "@nextui-org/react";
 import icon from "../publics/menu-vertical.png";
+import { useNavigate } from "react-router-dom";
 interface ICard {
   avatar?: string;
   username?: any;
@@ -32,6 +33,7 @@ interface ICard {
   showTopicDeleteButton: boolean;
   showTopicEditButton: boolean;
   topicOwner?: string;
+  isVoteOnTopic: boolean;
 }
 
 const CardComponent: FC<ICard> = ({
@@ -52,7 +54,7 @@ const CardComponent: FC<ICard> = ({
   topicCommentID,
   id,
   topicOwner,
-
+  isVoteOnTopic,
   ...props
 }) => {
   const dispatch = useAppDispatch();
@@ -60,6 +62,7 @@ const CardComponent: FC<ICard> = ({
   const sessionUser = sessionId ? JSON.parse(sessionId) : "";
   const currentUser = sessionUser.username;
   const [openUpdateTextBox, setopenUpdateTextBox] = useState(true);
+  const navigate = useNavigate();
   const handleTextBoxOpen = () => {
     if (currentUser === topicOwner) {
       setopenUpdateTextBox(!openUpdateTextBox);
@@ -88,15 +91,19 @@ const CardComponent: FC<ICard> = ({
         >
           {!show && (
             <div className="vote_component">
-              <VoteComponent id={id} />
+              <VoteComponent id={id} isVoteOnTopic={isVoteOnTopic} />
             </div>
           )}
           {!show && (
             <div className="avater_component">
-              <AvaterComponent src={image ? image : ""} id={id} />
+              <AvaterComponent
+                username={username}
+                src={image ? image : ""}
+                id={id}
+              />
             </div>
           )}
-          <div className="username" onClick={() => console.log(username)}>
+          <div className="username" onClick={() => navigate("/profile")}>
             {username}
           </div>
           <div className="timestamp">{timestamp}</div>
@@ -243,6 +250,11 @@ const CardContainer = styled.div<{ show?: boolean }>`
   .username,
   .timestamp {
     font-weight: 700;
+  }
+  .username {
+    :hover {
+      cursor: pointer;
+    }
   }
 `;
 

@@ -5,7 +5,8 @@ import { ITopic } from "../types/type";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import CardComponent from "./Card.component";
 import { convertDate } from "../utils/date";
-
+import { Avatar, Grid } from "@nextui-org/react";
+import PaperBackgroundComponent from "./Comments/PaperBackground.component";
 const TopicsComponent = () => {
   const { databaseTopics } = useAppSelector((state) => state.topic);
 
@@ -16,11 +17,11 @@ const TopicsComponent = () => {
   useEffect(() => {
     try {
       const data = async () => {
-        const fetchComment = await fetch("/api/gettopic", {
+        const fetchTopic = await fetch("/api/gettopic", {
           method: "GET",
         });
-        const fetchCommentResponse = await fetchComment.json();
-        dispatch(dbTopics(fetchCommentResponse.data));
+        const fetchTopicResponse = await fetchTopic.json();
+        dispatch(dbTopics(fetchTopicResponse.data));
       };
       data();
     } catch (err) {
@@ -36,7 +37,7 @@ const TopicsComponent = () => {
             ({ topic, _id, createdAt, author, username }: ITopic, index) => (
               <div key={index} className="all-posts">
                 <CardComponent
-                  username= {author?.username}
+                  username={author?.username}
                   remove={currentUser === author?._id ? "Delete" : ""}
                   reply={"Reply"}
                   edit={currentUser === author?._id ? "Edit" : ""}
@@ -45,16 +46,19 @@ const TopicsComponent = () => {
                   id={_id}
                   showTopicDeleteButton={true}
                   showTopicReplyButton={false}
-                  topicOwner={author?.username} showTopicEditButton={true}    
-                  image={author?.avatar} />
-                
-               
+                  topicOwner={author?.username}
+                  showTopicEditButton={true}
+                  image={author?.avatar}
+                  isVoteOnTopic={true}
+                />
               </div>
             )
           )
         ) : (
           <h5 className="color">
-            No post created yet. Please create new post.
+            <PaperBackgroundComponent style={no_post}>
+              <h4>No post created yet. Be the first to create a post.</h4>
+            </PaperBackgroundComponent>
           </h5>
         )}
       </OuterContainer>
@@ -87,5 +91,7 @@ const OuterContainer = styled.div`
     margin: 0 auto;
   }
 `;
-
-
+const no_post = {
+  color: "var(--moderate-blue)",
+  textAlign: "center",
+};

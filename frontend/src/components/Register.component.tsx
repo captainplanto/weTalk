@@ -7,6 +7,7 @@ import { loginState } from "../redux/features/topics";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { useNavigate } from "react-router-dom";
 import CustomButtonComponent from "./CustomButton.component";
+
 import {
   createDob,
   createEmail,
@@ -24,9 +25,15 @@ const RegisterComponent: FC<ISignIn> = ({ signIn }) => {
   const createUserProfile = { ...user };
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+ // const {register, handleSubmit, formState: { errors }} = useForm();
+
+
+
+
 
   const handleSignIn = async (e: React.ChangeEvent<HTMLButtonElement>) => {
     try {
+      dispatch(loginState(true));
       const signInUser = await fetch("/api/signin", {
         method: "POST",
         credentials: "include",
@@ -36,24 +43,24 @@ const RegisterComponent: FC<ISignIn> = ({ signIn }) => {
         },
         body: JSON.stringify({ firstTimeUser: createUserProfile }),
       });
+
       if (signInUser.status === 200) {
-      const response = await signInUser.json();
-      const sessionID = response.data
-       localStorage.setItem('item', JSON.stringify(sessionID))
+        const response = await signInUser.json();
+        const sessionID = response.data;
+        localStorage.setItem("item", JSON.stringify(sessionID));
         toast.success("Sign in successful");
-        navigate("/profile");
-        dispatch(loginState(true));
-      } else {
-        return toast.error("Incorrect username or password, please try again");
+        navigate("/");
+      } else if (signInUser.status === 400) {
+        toast.error("Incorrect username or password, please try again");
+        navigate("/");
       }
     } catch (error) {
       console.log(e);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement> | any) => {
     e.preventDefault();
-
     try {
       const createUser = await fetch("/api/newuser", {
         method: "POST",
@@ -88,7 +95,7 @@ const RegisterComponent: FC<ISignIn> = ({ signIn }) => {
         </Text>
       </Modal.Header>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={onSubmit}>
         <Modal.Body>
           {!signIn && (
             <>
@@ -118,6 +125,7 @@ const RegisterComponent: FC<ISignIn> = ({ signIn }) => {
                 aria-label="lastname"
                 contentLeft={<Mail fill="currentColor" />}
                 name="lastName"
+             
               />
 
               <Input
@@ -211,5 +219,3 @@ const Container = styled.div`
     background: red;
   }
 `;
-
-
