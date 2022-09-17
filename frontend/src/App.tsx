@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect } from "react";
 import styled from "styled-components";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,32 +8,30 @@ import { ToggleComponent } from "./components/Toggle.component";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import RegisterUser from "./pages/register";
 import LoginUser from "./pages/login";
-
 import NavBarComponent from "./components/Navbar.component";
 import AllTopics from "./pages/alltopic";
 import NewTopic from "./pages/newtopic";
 import TopicComment from "./pages/topiccomment";
-
-import ProfileComponent from "./components/Profile.component";
+import ProfileComponent from "./components/userprofiles/Profile.component";
 import { ToggleSwitch } from "./redux/features/topics";
 
 const App = () => {
-  const [mode, setMode] = useState<boolean>(false);
-
-
-  const toggleValue = localStorage.getItem("theme");
-  console.log(toggleValue, 'from local')
-
-  
-
-  
-
+  const { toggleMode } = useAppSelector((state) => state.topic);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    const themeInStorage = localStorage.getItem("theme");
+    const showTheme = themeInStorage ? JSON.parse(themeInStorage) : "";
+    if (showTheme === true) {
+      dispatch(ToggleSwitch(toggleMode));
+    } else {
+      dispatch(ToggleSwitch(!toggleMode));
+    }
+  }, []);
 
   return (
     <AppContainer
       style={{
-        backgroundColor: mode ? "rgb(36, 52, 71)" : "",
-
+        backgroundColor: !toggleMode ? "rgb(36, 52, 71)" : "",
         minHeight: "100vh",
       }}
     >

@@ -39,13 +39,14 @@ const CommentComponent = () => {
           topicOwner={username}
           showTopicEditButton={true}
           isVoteOnTopic={true}
+          image={author?.avatar}
         />
 
         {comments && comments.length > 0 ? (
           comments.map(({ _id, reply, votes, author }: IComment, index) => (
-            <CommentContainer key={index}>
+            <CommentContainer key={index}      style={{ marginTop: "1rem"}}>
               <CardComponent
-                style={{ marginBottom: "5rem", background: "red" }}
+           
                 id={_id}
                 topic={reply}
                 username={author?.username}
@@ -57,6 +58,7 @@ const CommentComponent = () => {
                 topicOwner={author?.username}
                 showTopicEditButton={false}
                 isVoteOnTopic={false}
+                image={author?.avatar}
               />
             </CommentContainer>
           ))

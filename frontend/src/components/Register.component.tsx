@@ -25,12 +25,6 @@ const RegisterComponent: FC<ISignIn> = ({ signIn }) => {
   const createUserProfile = { ...user };
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
- // const {register, handleSubmit, formState: { errors }} = useForm();
-
-
-
-
-
   const handleSignIn = async (e: React.ChangeEvent<HTMLButtonElement>) => {
     try {
       dispatch(loginState(true));

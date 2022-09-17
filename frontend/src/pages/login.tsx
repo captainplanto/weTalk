@@ -12,18 +12,19 @@ const LoginUser = () => {
         <RegisterComponent signIn={true} />
       </div>
     );
+  } else {
+    return (
+      <div
+        style={{
+          display: "grid",
+          placeContent: "center",
+          height: "100vh",
+        }}
+      >
+        <Loading type="points-opacity" />
+      </div>
+    );
   }
-  return (
-    <div
-      style={{
-        display: "grid",
-        placeContent: "center",
-        height: "100vh",
-      }}
-    >
-      <Loading type="points-opacity" />
-    </div>
-  );
 };
 
 export default LoginUser;

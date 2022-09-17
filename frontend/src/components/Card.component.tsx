@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import styled from "styled-components";
 import AvaterComponent from "./Avater.component";
 import VoteComponent from "./Vote.component";
@@ -13,7 +13,9 @@ import TopicReplyButtonComponent from "./TopicReplyButton.component";
 import DropdownComponent from "./Dropdown.Component";
 import { Dropdown } from "@nextui-org/react";
 import icon from "../publics/menu-vertical.png";
-import { useNavigate } from "react-router-dom";
+import UserNameClickHandler from "./UsernameClick.component";
+
+
 interface ICard {
   avatar?: string;
   username?: any;
@@ -34,6 +36,7 @@ interface ICard {
   showTopicEditButton: boolean;
   topicOwner?: string;
   isVoteOnTopic: boolean;
+  paperBackground?: string;
 }
 
 const CardComponent: FC<ICard> = ({
@@ -55,6 +58,7 @@ const CardComponent: FC<ICard> = ({
   id,
   topicOwner,
   isVoteOnTopic,
+  paperBackground,
   ...props
 }) => {
   const dispatch = useAppDispatch();
@@ -62,7 +66,6 @@ const CardComponent: FC<ICard> = ({
   const sessionUser = sessionId ? JSON.parse(sessionId) : "";
   const currentUser = sessionUser.username;
   const [openUpdateTextBox, setopenUpdateTextBox] = useState(true);
-  const navigate = useNavigate();
   const handleTextBoxOpen = () => {
     if (currentUser === topicOwner) {
       setopenUpdateTextBox(!openUpdateTextBox);
@@ -81,7 +84,7 @@ const CardComponent: FC<ICard> = ({
 
   return (
     <>
-      <PaperBackgroundComponent>
+      <PaperBackgroundComponent className={className}>
         <CardContainer
           style={{
             gridTemplateColumns:
@@ -103,9 +106,11 @@ const CardComponent: FC<ICard> = ({
               />
             </div>
           )}
-          <div className="username" onClick={() => navigate("/profile")}>
-            {username}
+
+          <div className="username">
+            <UserNameClickHandler>{username}</UserNameClickHandler>
           </div>
+
           <div className="timestamp">{timestamp}</div>
 
           {window.innerWidth <= 500 ? (
@@ -167,7 +172,6 @@ const CardComponent: FC<ICard> = ({
           <TextFieldComponent
             type="text"
             defaultValue={topic}
-            //value={editPost}
             onChange={handleChange}
           >
             {showTopicEditButton ? (
@@ -257,56 +261,3 @@ const CardContainer = styled.div<{ show?: boolean }>`
     }
   }
 `;
-
-/*
-     <PaperBackgroundComponent>
-     
-  <Grid container rowSpacing={1} columnSpacing={{ xs: 7, sm: 12, md: 12 }}>
-  <Grid item xs={0.5}>
-    {!show && (
-          <div className="vote_component">
-            <VoteComponent id={id} />
-          </div>
-        )}
-  </Grid>
-  <Grid item xs={0.5}>
-    {!show && (
-          <div className="avater_component">
-            <AvaterComponent src={image ? image : ""} />
-          </div>
-        )}
-  </Grid>
-  <Grid item xs={0.5}>
-  <div className="username">{username}</div>
-  </Grid>
-  <Grid item xs={0.5} md={2.3} sm={2.3}>
-   <div className="timestamp">{timestamp}</div>
-  </Grid>
-   <Grid item xs={1}>
-     <TopicDeleteButtonComponent
-          className="remove"
-          id={id}
-          showTopicDeleteButton={showTopicDeleteButton}
-          topicCommentID={topicCommentID ? topicCommentID : ""}  topicOwner={ topicOwner ? topicOwner : ''}>
-          {remove}
-        </TopicDeleteButtonComponent>
-  </Grid>
-   <Grid item xs={1}>
-       <TopicReplyButtonComponent
-          id={id}
-          showTopicReplyButton={showTopicReplyButton}
-          className="edit"
-        >
-          {reply}
-        </TopicReplyButtonComponent>
-  </Grid>
-   <Grid item xs={1}>
-     <div onClick={handleTextBoxOpen } className='reply'  >{edit}</div>
-  </Grid>
-    <Grid item xs={10} >
-      <div className="comment">{topic}</div>
-  </Grid>
-</Grid>
-
-</PaperBackgroundComponent>
-*/

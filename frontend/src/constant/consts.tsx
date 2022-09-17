@@ -1,5 +1,9 @@
 import { IRegister } from "../types/type";
-
+import HomeIcon from "@mui/icons-material/Home";
+import SearchIcon from "@mui/icons-material/Search";
+import LoginIcon from "@mui/icons-material/Login";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
+import LogoutIcon from "@mui/icons-material/Logout";
 export const Password = ({ fill, size, height, width, ...props }:IRegister) => {
   return (
     <svg
@@ -39,3 +43,46 @@ export const Mail = ({ fill, size, height, width, ...props }:IRegister) => {
     </svg>
   );
 };
+
+
+export const TabContents = [
+  {
+    id: 1,
+    title: "Topics",
+  },
+
+  {
+    id: 2,
+    title: "Comments",
+  },
+
+  {
+    id: 3,
+    title: "Likes",
+  },
+];
+
+
+export const noSessionNavBar = [
+  { name: "HOME", path: "/", id: 1 },
+  { name: "LOGIN", path: "/login", id: 2 },
+  { name: "REGISTER", path: "/register", id: 3 },
+];
+
+export const sessionNavBar = [
+  { name: "HOME", path: "/", id: 1 },
+  { name: "LOGOUT", path: "/", id: 2 },
+  { name: "CREATE TOPIC", path: "/newtopic", id: 3 },
+];
+
+export const mobileNavBarNoSession = [
+  { name: "HOME", path: "/", id: 1, icon: <HomeIcon /> },
+  { name: "SEARCH", path: "/login", id: 2, icon: <SearchIcon /> },
+  { name: "LOGIN", path: "/login", id: 3, icon: <LoginIcon /> },
+  { name: "REGISTER", path: "/register", id: 4, icon: <LockOpenIcon /> },
+];
+export const mobileNavBarSession = [
+  { name: "HOME", path: "/", id: 1, icon: <HomeIcon /> },
+  { name: "SEARCH", path: "/login", id: 3, icon: <SearchIcon /> },
+  { name: "LOGOUT", path: "/login", id: 2, icon: <LogoutIcon /> },
+];

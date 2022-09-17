@@ -1,6 +1,6 @@
 import React, { FC, FormEventHandler } from "react";
 import styled from "styled-components";
-import CustomButtonComponent from "./CustomButton.component";
+
 
 interface IImageInput {
   value?: any;
@@ -12,10 +12,10 @@ interface IImageInput {
   defaultValue?: string;
   accept?: string;
   onChange: (e: any) => void;
-  //onSubmit: (e: any) => void;
+
 }
 
-const ImageUploadComponent: FC<IImageInput> = ({
+const UploadInputComponent: FC<IImageInput> = ({
   value,
   type,
   onClick,
@@ -46,7 +46,7 @@ const ImageUploadComponent: FC<IImageInput> = ({
   );
 };
 
-export default ImageUploadComponent;
+export default UploadInputComponent;
 
 const Container = styled.div`
   display: flex;

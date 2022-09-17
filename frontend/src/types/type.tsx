@@ -2,7 +2,7 @@ import { Schema } from "mongoose";
 import { ReactNode } from "react";
 
 export interface IUser {
-  _id: Schema.Types.ObjectId;
+  _id?: Schema.Types.ObjectId;
   firstName: string;
   lastName: string;
   username: string;
@@ -10,7 +10,7 @@ export interface IUser {
   email: string;
   password: string;
   createdAt?: string;
-  avatar:string;
+  avatar: string;
 }
 
 export interface ITopic {
@@ -30,7 +30,6 @@ export interface IComment {
   votes: any;
   createdAt?: string;
   author: { [key: string]: any };
- 
 }
 
 export interface IDatabasedata {
@@ -40,12 +39,12 @@ export interface IDatabasedata {
 
 export interface IDbcomments {
   databaseTopics: [];
-  databaseReplyTopic:ITopic | undefined;
+  databaseReplyTopic: ITopic | undefined;
   newtopic: string;
   replyTopic: string;
   openReplyToBox: boolean;
   toggleMode: boolean;
-  userProfile:IUser | undefined;
+  userProfile: IUser | undefined;
   loginSuccessful: boolean;
 }
 
@@ -59,22 +58,26 @@ export interface SessionData {
   user: { [key: string]: any };
 }
 export interface ITopicReplyButton {
-id:Schema.Types.ObjectId;
-children:ReactNode;
-showTopicReplyButton:boolean;
-className?:string;
-    
+  id: Schema.Types.ObjectId;
+  children: ReactNode;
+  showTopicReplyButton: boolean;
+  className?: string;
 }
 
-
 export interface ITopicEditedButton {
-id:Schema.Types.ObjectId;
-showTopicEditButton:boolean;
-children:ReactNode;
-className?:string;
-onClick?:(e:any)=>void;
-   topicCommentID?: any;
-   topicOwner:string;
+  id: Schema.Types.ObjectId;
+  showTopicEditButton: boolean;
+  children: ReactNode;
+  className?: string;
+  onClick?: (e: any) => void;
+  topicCommentID?: any;
+  topicOwner: string;
+}
 
-    
+export interface IUserTopics {
+  user: IUser,
+  currentTab: number,
+  showUploadButton:boolean,
+  topicsByUser: ITopic[];
+  usernameClicked:boolean;
 }

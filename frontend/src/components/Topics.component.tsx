@@ -5,11 +5,10 @@ import { ITopic } from "../types/type";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import CardComponent from "./Card.component";
 import { convertDate } from "../utils/date";
-import { Avatar, Grid } from "@nextui-org/react";
 import PaperBackgroundComponent from "./Comments/PaperBackground.component";
+
 const TopicsComponent = () => {
   const { databaseTopics } = useAppSelector((state) => state.topic);
-
   const dispatch = useAppDispatch();
   const sessionId = localStorage.getItem("item");
   const sessionUser = sessionId ? JSON.parse(sessionId) : "";
@@ -49,8 +48,7 @@ const TopicsComponent = () => {
                   topicOwner={author?.username}
                   showTopicEditButton={true}
                   image={author?.avatar}
-                  isVoteOnTopic={true}
-                />
+                  isVoteOnTopic={true} className={"homepage_paperbackground"}                />
               </div>
             )
           )

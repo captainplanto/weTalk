@@ -33,7 +33,7 @@ const TextFieldComponent: FC<IInput> = ({
   return (
     <>
       {openReplyToBox ? (
-        <Outer>
+        <Outer style={{ marginTop: "1rem"}}>
           <PaperBackgroundComponent className="padding">
             <Container>
               <div>
