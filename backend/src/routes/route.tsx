@@ -15,6 +15,8 @@ import {
   editUserTopic,
   getReplyToTopic,
   getTopic,
+  userTopics,
+ 
 } from "./users/userposts/topic";
 import {
   downVoteComment,
@@ -68,3 +70,7 @@ router.post(
   CloudinaryMiddleware,
   UserProfileJpg
 );
+
+
+router.post("/user/topics", userTopics);
+//router.post("/user/topicss", userTopicss);

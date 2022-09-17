@@ -88,7 +88,6 @@ export const downVoteTopic = async (req: Request, res: Response) => {
 export const getUpVoteTopic = async (req: Request, res: Response) => {
   const topicId = req.params.id;
   const getVotesOnTopic = await Topic.findById(topicId);
-  console.log(getVotesOnTopic);
   try {
     if (getVotesOnTopic) {
       res.status(200).json({
@@ -126,12 +125,12 @@ export const getUpVoteTopic = async (req: Request, res: Response) => {
 export const upVoteComment = async (req: Request, res: Response) => {
   const commentId = req.params.id;
   const sessionId = req.body.increaseVote;
-  console.log(commentId)
+  const session = req.session.user;
   const findVoteOnComment = await Comment.findById(commentId).where({
     votes: sessionId,
   });
   try {
-    if (req.session.user.id) {
+    if (session) {
       if (!findVoteOnComment) {
         const upVoteComment = await Comment.findByIdAndUpdate(
           commentId,

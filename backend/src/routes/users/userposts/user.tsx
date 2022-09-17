@@ -30,7 +30,7 @@ export const registerUser = async (req: Request, res: Response) => {
         message: "Existing user, please register with another credential",
         success: false,
       });
-      console.log("existing user");
+    
     }
   } catch (err) {
     res.status(500).json({
@@ -45,8 +45,7 @@ export const signInUser = async (req: Request, res: Response, next:any) => {
   const { username, password } = req.body.firstTimeUser;
   const user = await User.findOne({ username: username });
   const validateUser = await bcrypt.compare(password, user.password);
-  console.log(validateUser)
-  console.log(user)
+ 
   try {
     if (validateUser && user) {
       const sessionUser = {
@@ -128,8 +127,7 @@ export const registerUserInfo = async (req: Request, res: Response) => {
 
 export const UserProfileJpg = async (req: Request, res: Response) => {
   const userInSession = req.params.currentUser;
-  console.log(userInSession);
-  console.log(req.session.user.username);
+
   const image = req.body.profileImage;
   if (userInSession === req.session.user.username) {
     const uploadAvaterImage = await User.updateOne(

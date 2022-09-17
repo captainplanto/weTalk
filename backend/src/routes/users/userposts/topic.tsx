@@ -1,36 +1,59 @@
 import express, { Request, Response } from "express";
 import Topic from "../../../models/topic.model";
 import Comment from "../../../models/comment.model";
-import { TOPIC_MODEL, TOPIC_TOPIC_MODEL } from "../../../queries/db.populate";
+import {
+  TOPIC_MODEL_AUTHOR,
+  TOPIC_MODEL_COMMENT,
+  USER_MODEL_COMMENTS,
+  USER_TOPICS_MODEL,
+} from "../../../queries/db.populate";
+import User from "../../../models/user.model";
 
-/*export const isAuthor = async (req: Request, res: Response, next: any) => {
-  const id = req.params.id;
-  const topic = await Topic.findById(id);
+export const AuthenticateUser = async (
+  req: Request,
+  res: Response,
+  next: any
+) => {
+  const session = req.session.user;
   try {
-    if (!topic.author === req.session.user.id) {
-      res.status(402).json({
-        message: "You cannot edit this topic, it belongs to another user",
+    if (session) {
+      res.status(200).json({
+        message: "You are logged in",
+        success: true,
       });
     } else {
+      res.status(400).json({
+        message: "Please log in or Register to perform this action",
+        success: false,
+      });
       next();
     }
-  } catch (e) {
-    console.log(e);
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error, try again later",
+      success: false,
+    });
+    console.log(error);
   }
 };
 
-*/
 export const createTopic = async (req: Request, res: Response) => {
   const topic = req.body.createTopic;
   const userTopic = new Topic({ topic: topic });
-  userTopic.author = req.session.user.id;
+  const sessionId = req.session.user.id;
+  userTopic.author = sessionId;
   try {
-    if (req.session.user.id) {
-      const savedTopic = await userTopic.save();
+    if (sessionId) {
+      const saveTopic = await userTopic.save();
+      const topicByUser = await User.findByIdAndUpdate(
+        sessionId,
+        { $push: { topics: userTopic } },
+        { runValidators: true }
+      );
       return res.status(200).json({
         message: "Topic successfully created",
         success: true,
-        data: savedTopic,
+        data: saveTopic,
       });
     } else {
       res.status(202).json({
@@ -48,8 +71,9 @@ export const createTopic = async (req: Request, res: Response) => {
 };
 
 export const getTopic = async (req: Request, res: Response) => {
-  const dbTopics = await Topic.find({}).populate("author");
-
+  const dbTopics = await Topic.find({})
+    .populate(TOPIC_MODEL_COMMENT)
+    .populate(TOPIC_MODEL_AUTHOR);
   try {
     if (dbTopics && dbTopics.length > 0) {
       res.status(200).json({
@@ -176,8 +200,8 @@ export const editUserComment = async (req: Request, res: Response) => {
 export const getReplyToTopic = async (req: Request, res: Response) => {
   const id = req.params.id;
   const dbReplyTopics = await Topic.findById(id)
-    .populate(TOPIC_MODEL)
-    .populate(TOPIC_TOPIC_MODEL)
+    .populate(TOPIC_MODEL_COMMENT)
+    .populate(TOPIC_MODEL_AUTHOR)
     .exec();
   try {
     if (dbReplyTopics) {
@@ -235,3 +259,39 @@ export const deleteUserCommentOnATopic = async (
     });
   }
 };
+
+export const userTopics = async (req: Request, res: Response) => {
+  const { usernameToClick } = req.body;
+  const user = await User.findOne({ username: usernameToClick })
+    .populate(USER_TOPICS_MODEL)
+    .populate(USER_MODEL_COMMENTS);
+  const topicsByUser = user.topics;
+  try {
+    if (topicsByUser && topicsByUser.length > 0) {
+      res.status(200).json({
+        message: "All user topics successfully fetched from database",
+        success: true,
+        data: topicsByUser,
+      });
+    } else {
+      res.status(400).json({
+        message: "No topic created yet by this user.",
+        success: false,
+        data: topicsByUser,
+      });
+    }
+  } catch (e) {
+    res.status(500).json({
+      message:
+        "Cannot fetch user topics from database at this time, please try again....",
+      e,
+      success: false,
+    });
+  }
+};
+
+
+
+
+
+
