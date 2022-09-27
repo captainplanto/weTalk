@@ -261,10 +261,8 @@ export const deleteUserCommentOnATopic = async (
 };
 
 export const userTopics = async (req: Request, res: Response) => {
-  const { usernameToClick } = req.body;
-  const user = await User.findOne({ username: usernameToClick })
-    .populate(USER_TOPICS_MODEL)
-    .populate(USER_MODEL_COMMENTS);
+  const {username}=req.params;
+  const user = await User.findOne({ username: username }).populate(USER_TOPICS_MODEL).populate(USER_MODEL_COMMENTS);
   const topicsByUser = user.topics;
   try {
     if (topicsByUser && topicsByUser.length > 0) {
@@ -289,8 +287,6 @@ export const userTopics = async (req: Request, res: Response) => {
     });
   }
 };
-
-
 
 
 

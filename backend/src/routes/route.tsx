@@ -72,5 +72,6 @@ router.post(
 );
 
 
-router.post("/user/topics", userTopics);
-//router.post("/user/topicss", userTopicss);
+router.get("/user/topics/:username", userTopics);
+
+//router.get("/user/topics/:username", userTopics);
