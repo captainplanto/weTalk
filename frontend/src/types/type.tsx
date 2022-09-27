@@ -80,4 +80,6 @@ export interface IUserTopics {
   showUploadButton:boolean,
   topicsByUser: ITopic[];
   usernameClicked:boolean;
+  userNameParams:string|ReactNode|undefined;
+
 }

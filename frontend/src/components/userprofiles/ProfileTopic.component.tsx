@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
-import { setTopicsByUser } from "../../redux/features/userprofile";
+
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { ITopic } from "../../types/type";
 import { convertDate } from "../../utils/date";
@@ -12,10 +12,13 @@ const ProfileTopicComponent = () => {
   const sessionId = localStorage.getItem("item");
   const sessionUser = sessionId ? JSON.parse(sessionId) : "";
   const currentUser = sessionUser.username;
+
+    console.log(topicsByUser)
+   //const { userNameParams } = useAppSelector((state) => state.profile);
   const dispatch = useAppDispatch();
- /* useEffect(() => {
+ /*useEffect(() => {
     const get = async () => {
-      const userTopic = await fetch("/api/user/topics", {
+      const userTopic = await fetch(`/api/user/topics/${userNameParams}`, {
         method: "GET",
       });
 

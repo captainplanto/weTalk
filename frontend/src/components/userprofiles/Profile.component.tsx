@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect} from "react";
 import styled from "styled-components";
-import AvaterComponent from "../Avater.component";
 import { userProfileInfo } from "../../redux/features/topics";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { IUser } from "../../types/type";
@@ -10,26 +9,26 @@ import TabComponent from "../Tabs.component";
 import ProfileTopicComponent from "./ProfileTopic.component";
 import ProfileLikesComponent from "./ProfileLikes.component";
 import ProfileCommentComponent from "./ProfileComment.component";
-import { setUsernameClicked } from "../../redux/features/userprofile";
+import {  setUsernameClicked } from "../../redux/features/userprofile";
 import { UploadImageComponent } from "./UploadImage.component";
 
 const ProfileComponent = () => {
   const { userProfile } = useAppSelector((state) => state.topic);
-  const { currentTab } = useAppSelector((state) => state.profile);
+  const { currentTab} = useAppSelector((state) => state.profile);
+ 
   const dispatch = useAppDispatch();
   const sessionid = localStorage.getItem("item");
   const sessionUser = sessionid ? JSON.parse(sessionid) : "";
   const currentUser = sessionUser.username;
-  const [image, setImage] = useState<any>();
-  const [renderImage, setRenderImage] = useState<boolean>(false);
 
   useEffect(() => {
     const getUser = async () => {
-      const userInfo = await fetch(`/api/userprofile/${sessionUser.username}`, {
+      const userInfo = await fetch(`/api/userprofile/${currentUser}`, {
         method: "GET",
       });
       const userResponse = await userInfo.json();
       dispatch(userProfileInfo(userResponse.data));
+    
     };
     const itemInStorage = localStorage.getItem("state");
     const getItemInStorage = itemInStorage ? JSON.parse(itemInStorage) : "";
@@ -38,6 +37,7 @@ const ProfileComponent = () => {
     } else {
       dispatch(setUsernameClicked(false));
     }
+
     getUser();
   }, []);
 
@@ -47,16 +47,7 @@ const ProfileComponent = () => {
     return (
       <ProfileContainer>
         <div>
-          <UploadImageComponent username={username} />
-
-          {renderImage ? (
-            <>
-              <AvaterComponent src={image && image} username={username} />
-              <h5>Failed to upload</h5>
-            </>
-          ) : (
-            <AvaterComponent src={avatar} username={username} />
-          )}
+          <UploadImageComponent username={username} avatar={avatar} />
           <ul>
             <li>{`${firstName} ${lastName}`}</li>
             <li style={{ color: "var(--main-blue)" }}>@{username}</li>

@@ -2,10 +2,14 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { useAppSelector } from "../../redux/hooks";
 import { IUser } from "../../types/type";
+import AvaterComponent from "../Avater.component";
 import CustomButtonComponent from "../CustomButton.component";
 import UploadInputComponent from "../UploadInput.component";
 
-export const UploadImageComponent = ({ username }: Pick<IUser, "username">) => {
+export const UploadImageComponent = ({
+  username,
+  avatar,
+}: Pick<IUser, "username" | "avatar">) => {
   const [image, setImage] = useState<any>();
   const [renderImage, setRenderImage] = useState<boolean>(false);
   const { usernameClicked } = useAppSelector((state) => state.profile);
@@ -56,7 +60,6 @@ export const UploadImageComponent = ({ username }: Pick<IUser, "username">) => {
             name="image"
             onChange={handleChange}
           />
-
           <CustomButtonComponent onClick={handleSubmit()}>
             Upload Image
           </CustomButtonComponent>
@@ -64,6 +67,14 @@ export const UploadImageComponent = ({ username }: Pick<IUser, "username">) => {
         </>
       ) : (
         ""
+      )}
+      {renderImage ? (
+        <>
+          <AvaterComponent src={image && image} username={username} />
+          <h5>Failed to upload</h5>
+        </>
+      ) : (
+        <AvaterComponent src={avatar} username={username} />
       )}
     </div>
   );

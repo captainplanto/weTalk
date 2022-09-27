@@ -2,13 +2,16 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppState } from "../store";
 import { profileState } from "../../constant/state";
 import { IUserTopics } from "../../types/type";
+import { ReactNode } from "react";
 
-const initialState:IUserTopics = {
+
+const initialState: IUserTopics = {
   user: profileState,
   currentTab: 1,
-  showUploadButton:false,
-  topicsByUser : [],
-  usernameClicked:false,
+  showUploadButton: false,
+  topicsByUser: [],
+  usernameClicked: false,
+  userNameParams:''
 };
 
 export const profileSlice = createSlice({
@@ -36,17 +39,20 @@ export const profileSlice = createSlice({
     createPassword: (state, action: PayloadAction<string>) => {
       state.user.password = action.payload;
     },
-     setCurrentTab: (state, action: PayloadAction<number>) => {
+    setCurrentTab: (state, action: PayloadAction<number>) => {
       state.currentTab = action.payload;
     },
-      setShowUploadButton: (state, action: PayloadAction<boolean>) => {
+    setShowUploadButton: (state, action: PayloadAction<boolean>) => {
       state.showUploadButton = action.payload;
     },
-      setTopicsByUser: (state, action: PayloadAction<[]>) => {
+    setTopicsByUser: (state, action: PayloadAction<[]>) => {
       state.topicsByUser = action.payload;
     },
-      setUsernameClicked: (state, action: PayloadAction<boolean>) => {
+    setUsernameClicked: (state, action: PayloadAction<boolean>) => {
       state.usernameClicked = action.payload;
+    },
+     setUserNameParams: (state, action: PayloadAction<ReactNode>) => {
+      state.userNameParams = action.payload;
     },
   },
 });
@@ -55,6 +61,7 @@ export const {
   createDob,
   setShowUploadButton,
   setUsernameClicked,
+  setUserNameParams,
   createEmail,
   createFirstName,
   createLastName,
