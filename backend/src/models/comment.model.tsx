@@ -11,6 +11,7 @@ const commentSchema = new Schema<IComment>(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    
     votes: [{ type: Schema.Types.ObjectId, default: [] }],
   },
   { timestamps: true }
@@ -20,5 +21,3 @@ const Comment = mongoose.model<IComment>("Comment", commentSchema);
 
 export const schema = Comment.schema;
 export default Comment;
-
-

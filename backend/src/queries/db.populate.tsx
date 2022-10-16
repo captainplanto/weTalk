@@ -5,13 +5,13 @@ import UserModel from "../models/user.model";
 export const TOPIC_MODEL_COMMENT = {
   path: "comments",
   model: CommentModel,
-  select: "reply votes author",
+  select: "reply votes author _id",
 };
 
 export const TOPIC_MODEL_AUTHOR = {
   path: "author",
   model: UserModel,
-  select: "username firstName lastName avatar",
+  select: "username firstName lastName avatar dob email _id",
 };
 
 export const USER_TOPICS_MODEL = {

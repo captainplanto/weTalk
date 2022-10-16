@@ -8,6 +8,7 @@ import {
   USER_TOPICS_MODEL,
 } from "../../../queries/db.populate";
 import User from "../../../models/user.model";
+import mongoose from "mongoose";
 
 export const AuthenticateUser = async (
   req: Request,
@@ -152,6 +153,13 @@ export const createReplyToTopic = async (req: Request, res: Response) => {
         { $push: { comments: createReply } },
         { upsert: true }
       );
+
+      const topicByUser = await User.findByIdAndUpdate(
+        session.id,
+        { $push: { comments: createReply } },
+        { upsert: true }
+      );
+
       return res.status(200).json({
         message: "Reply successfully created",
         success: true,
@@ -260,34 +268,113 @@ export const deleteUserCommentOnATopic = async (
   }
 };
 
-export const userTopics = async (req: Request, res: Response) => {
-  const {username}=req.params;
-  const user = await User.findOne({ username: username }).populate(USER_TOPICS_MODEL).populate(USER_MODEL_COMMENTS);
-  const topicsByUser = user.topics;
+export const userData = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const userObject = await User.findOne({ _id: id })
+    .populate(USER_TOPICS_MODEL)
+    .populate(USER_MODEL_COMMENTS);
+  const userDetails = userObject;
   try {
-    if (topicsByUser && topicsByUser.length > 0) {
+    if (userDetails) {
       res.status(200).json({
         message: "All user topics successfully fetched from database",
         success: true,
-        data: topicsByUser,
+        data: userDetails,
       });
     } else {
       res.status(400).json({
         message: "No topic created yet by this user.",
         success: false,
-        data: topicsByUser,
       });
     }
   } catch (e) {
     res.status(500).json({
       message:
-        "Cannot fetch user topics from database at this time, please try again....",
+        "Cannot fetch user details from database at this time, please try again....",
       e,
       success: false,
     });
   }
 };
 
+export const allLikedTopicByUser = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const userClickedId = new mongoose.Types.ObjectId(id);
+  const topicsLikedByUser = await Topic.aggregate([
+    { $project: { topic: 1, votes: 1, author: 1, createdAt: 1, comments: 1 } },
 
+    { $match: { votes: userClickedId } },
+    {
+      $lookup: {
+        from: "users",
+        pipeline: [{ $project: { username: 1, avatar: 1 } }],
+        localField: "author",
+        foreignField: "_id",
+        as: "author",
+      },
+    },
+    { $unwind: "$topic" },
+  ]);
 
+  try {
+    if (topicsLikedByUser) {
+      res.status(200).json({
+        message: "All topics liked by user",
+        success: true,
+        data: topicsLikedByUser,
+      });
+    } else if (!topicsLikedByUser) {
+      res.status(400).json({
+        message: "The user has not liked any topic yet",
+        success: false,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message:
+        "Error fetching liked topics by user from the database, Please try again later....",
+      success: false,
+    });
+  }
+};
 
+export const allCommentedTopicByUser = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const userClickedId = new mongoose.Types.ObjectId(id);
+  const topicsCommentedOnByUser = await Topic.aggregate([
+    { $project: { topic: 1, comments: 1, avatar: 1, _id: 1 } },
+    {
+      $lookup: {
+        from: "comments",
+        pipeline: [{ $project: { reply: 1, author: 1 } }],
+        localField: "comments",
+        foreignField: "reply",
+        as: "comments",
+      },
+    },
+    { $match: { _id: userClickedId } },
+
+    { $unwind: "$topic" },
+  ]);
+
+  try {
+    if (topicsCommentedOnByUser) {
+      res.status(200).json({
+        message: "All topics liked by user",
+        success: true,
+        data: topicsCommentedOnByUser,
+      });
+    } else if (!topicsCommentedOnByUser) {
+      res.status(400).json({
+        message: "The user has not liked any topic yet",
+        success: false,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message:
+        "Error fetching liked topics by user from the database, Please try again later....",
+      success: false,
+    });
+  }
+};

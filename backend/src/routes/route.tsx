@@ -7,6 +7,8 @@ import {
   UserProfileJpg,
 } from "./users/userposts/user";
 import {
+  allCommentedTopicByUser,
+  allLikedTopicByUser,
   createReplyToTopic,
   createTopic,
   deleteUserCommentOnATopic,
@@ -15,8 +17,7 @@ import {
   editUserTopic,
   getReplyToTopic,
   getTopic,
-  userTopics,
- 
+  userData,
 } from "./users/userposts/topic";
 import {
   downVoteComment,
@@ -71,7 +72,9 @@ router.post(
   UserProfileJpg
 );
 
+//get userData
+router.get("/user/topics/:id", userData);
 
-router.get("/user/topics/:username", userTopics);
+router.get("/user/topics/comments/:id", allCommentedTopicByUser);
 
-//router.get("/user/topics/:username", userTopics);
+router.get("/user/topics/likes/:id", allLikedTopicByUser);

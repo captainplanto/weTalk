@@ -32,6 +32,7 @@ export interface ITopic {
 }
 
 export interface IComment {
+  _id:Schema.Types.ObjectId;
   reply: string;
   votes: Schema.Types.ObjectId[];
   author: { [key: string]: any; };
