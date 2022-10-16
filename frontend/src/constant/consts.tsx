@@ -4,7 +4,16 @@ import SearchIcon from "@mui/icons-material/Search";
 import LoginIcon from "@mui/icons-material/Login";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import LogoutIcon from "@mui/icons-material/Logout";
-export const Password = ({ fill, size, height, width, ...props }:IRegister) => {
+import AvatarComponent from "../components/Avater.component";
+import { useEffect, useState } from "react";
+import { SearchComponent } from "../components/Search.component";
+export const Password = ({
+  fill,
+  size,
+  height,
+  width,
+  ...props
+}: IRegister) => {
   return (
     <svg
       width={size || width || 24}
@@ -20,9 +29,7 @@ export const Password = ({ fill, size, height, width, ...props }:IRegister) => {
   );
 };
 
-
-
-export const Mail = ({ fill, size, height, width, ...props }:IRegister) => {
+export const Mail = ({ fill, size, height, width, ...props }: IRegister) => {
   return (
     <svg
       width={size || width || 24}
@@ -44,7 +51,6 @@ export const Mail = ({ fill, size, height, width, ...props }:IRegister) => {
   );
 };
 
-
 export const TabContents = [
   {
     id: 1,
@@ -62,6 +68,41 @@ export const TabContents = [
   },
 ];
 
+export const CurrentUserImage = () => {
+  const [avatar, setAvatar] = useState<string>("");
+  const sessionId = localStorage.getItem("item");
+  const sessionUser = sessionId ? JSON.parse(sessionId) : "";
+  const currentUser = sessionUser.username;
+
+  useEffect(() => {
+    try {
+      const data = async () => {
+        const currentUserAvatar = await fetch(
+          `/api/userprofile/${currentUser}`,
+          {
+            method: "GET",
+          }
+        );
+
+        const currrentUserAvatarResponse = await currentUserAvatar.json();
+        setAvatar(currrentUserAvatarResponse.data.avatar);
+       // console.log(currrentUserAvatarResponse.data);
+      };
+
+      data();
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+  return (
+    <div>
+      <AvatarComponent
+        src={avatar ? avatar : ""}
+        username={currentUser.username}
+      />
+    </div>
+  );
+};
 
 export const noSessionNavBar = [
   { name: "HOME", path: "/", id: 1 },
@@ -71,8 +112,25 @@ export const noSessionNavBar = [
 
 export const sessionNavBar = [
   { name: "HOME", path: "/", id: 1 },
+  {
+    name: (
+      <SearchComponent
+        type="text"
+        name={"search"}
+        placeholder={"Find topic here"}
+      />
+    ),
+    path: "",
+    id: 6,
+  },
   { name: "LOGOUT", path: "/", id: 2 },
   { name: "CREATE TOPIC", path: "/newtopic", id: 3 },
+];
+export const mobileNavBarSession = [
+  { name: "HOME", path: "/", id: 1, icon: <HomeIcon /> },
+  { name: "SEARCH", path: "/login", id: 3, icon: <SearchIcon /> },
+  { name: "LOGOUT", path: "/login", id: 2, icon: <LogoutIcon /> },
+  { name: "PROFILE", path: "/currentuser", id: 4, icon: <CurrentUserImage /> },
 ];
 
 export const mobileNavBarNoSession = [
@@ -80,9 +138,4 @@ export const mobileNavBarNoSession = [
   { name: "SEARCH", path: "/login", id: 2, icon: <SearchIcon /> },
   { name: "LOGIN", path: "/login", id: 3, icon: <LoginIcon /> },
   { name: "REGISTER", path: "/register", id: 4, icon: <LockOpenIcon /> },
-];
-export const mobileNavBarSession = [
-  { name: "HOME", path: "/", id: 1, icon: <HomeIcon /> },
-  { name: "SEARCH", path: "/login", id: 3, icon: <SearchIcon /> },
-  { name: "LOGOUT", path: "/login", id: 2, icon: <LogoutIcon /> },
 ];

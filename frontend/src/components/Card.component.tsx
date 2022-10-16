@@ -1,9 +1,9 @@
-import React, { FC,  useState } from "react";
+import React, { FC,  ReactNode,  useState } from "react";
 import styled from "styled-components";
 import AvaterComponent from "./Avater.component";
 import VoteComponent from "./Vote.component";
 import { createTopic } from "../redux/features/topics";
-import { useAppDispatch } from "../redux/hooks";
+import { useAppDispatch} from "../redux/hooks";
 import TopicDeleteButtonComponent from "./Comments/TopicDeleteButton.component";
 import PaperBackgroundComponent from "./Comments/PaperBackground.component";
 import { Schema } from "mongoose";
@@ -14,6 +14,7 @@ import DropdownComponent from "./Dropdown.Component";
 import { Dropdown } from "@nextui-org/react";
 import icon from "../publics/menu-vertical.png";
 import UserNameClickHandler from "./UsernameClick.component";
+
 
 
 interface ICard {
@@ -37,6 +38,7 @@ interface ICard {
   topicOwner?: string;
   isVoteOnTopic: boolean;
   paperBackground?: string;
+  userId?:any;
 }
 
 const CardComponent: FC<ICard> = ({
@@ -56,6 +58,7 @@ const CardComponent: FC<ICard> = ({
   showTopicEditButton,
   topicCommentID,
   id,
+   userId,
   topicOwner,
   isVoteOnTopic,
   paperBackground,
@@ -108,7 +111,7 @@ const CardComponent: FC<ICard> = ({
           )}
 
           <div className="username">
-            <UserNameClickHandler>{username}</UserNameClickHandler>
+            <UserNameClickHandler _id={ userId  ? userId : ''}>{username}</UserNameClickHandler>
           </div>
 
           <div className="timestamp">{timestamp}</div>

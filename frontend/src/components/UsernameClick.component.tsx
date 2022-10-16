@@ -1,42 +1,19 @@
 import { useNavigate } from "react-router-dom";
-import { setTopicsByUser } from "../redux/features/userprofile";
-import { useAppDispatch } from "../redux/hooks";
-import { FC, ReactNode,  useState } from "react";
+import { FC, ReactNode } from "react";
+import { Schema } from "mongoose";
+
 interface IuserName {
   children: ReactNode;
+  _id:Schema.Types.ObjectId;
 }
-const UserNameClickHandler: FC<IuserName> = ({ children }) => {
-  const [userClick] = useState<boolean>(false);
-
-  const dispatch = useAppDispatch();
+const UserNameClickHandler: FC<IuserName> = ({ children, _id}) => {
   const navigate = useNavigate();
-  const sessionid = localStorage.getItem("item");
-  const sessionUser = sessionid ? JSON.parse(sessionid) : "";
-  const currentUser = sessionUser.username;
- 
 
-  const onUserNameClick = async () => {
-    if (currentUser === children) {
-      localStorage.setItem("state", JSON.stringify(!userClick));
-    } else if (currentUser !== children) {
-      localStorage.setItem("state", JSON.stringify(userClick));
-    }
-
-    const userTopic = await fetch(`/api/user/topics/${children}`, {
-      method: "GET",
-    });
-    if (userTopic.status === 200) {
-      navigate("/profile");
-      const { data } = await userTopic.json();
-      dispatch(setTopicsByUser(data));
-    }
-    if (userTopic.status === 400) {
-      navigate("/profile");
-      const { data } = await userTopic.json();
-      dispatch(setTopicsByUser(data));
-    }
+  const onUserNameClick = async (_id:Schema.Types.ObjectId) => {
+    localStorage.setItem("usernameClicked", JSON.stringify(_id));
+    navigate("/profile");
   };
 
-  return <div onClick={onUserNameClick}>{children}</div>;
+  return <div onClick={()=>onUserNameClick(_id)}>{children}</div>;
 };
 export default UserNameClickHandler;

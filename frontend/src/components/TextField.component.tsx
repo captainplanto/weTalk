@@ -2,6 +2,7 @@ import React, { FC, ReactNode } from "react";
 import styled from "styled-components";
 import { useAppSelector } from "../redux/hooks";
 import PaperBackgroundComponent from "./Comments/PaperBackground.component";
+import { SearchComponent } from "./Search.component";
 
 interface IInput {
   value?: string;
@@ -31,28 +32,32 @@ const TextFieldComponent: FC<IInput> = ({
 }) => {
   const { openReplyToBox } = useAppSelector((state) => state.topic);
   return (
-    <>
-      {openReplyToBox ? (
-        <Outer style={{ marginTop: "1rem"}}>
-          <PaperBackgroundComponent className="padding">
-            <Container>
-              <div>
-                <textarea
-                  value={value}
-                  style={{ ...style }}
-                  onChange={onChange}
-                  defaultValue={defaultValue}
-                  name={name}
-                />
-              </div>
-              <div>{children}</div>
-            </Container>
-          </PaperBackgroundComponent>
-        </Outer>
+    <div>
+      {name !== "textbox" ? (
+        openReplyToBox ? (
+          <Outer style={{ marginTop: "1rem" }}>
+            <PaperBackgroundComponent className="padding">
+              <Container>
+                <div>
+                  <textarea
+                    value={value}
+                    style={{ ...style }}
+                    onChange={onChange}
+                    defaultValue={defaultValue}
+                    name={name}
+                  />
+                </div>
+                <div>{children}</div>
+              </Container>
+            </PaperBackgroundComponent>
+          </Outer>
+        ) : (
+          ""
+        )
       ) : (
-        ""
+       <SearchComponent type={""} name={"textbox"} placeholder={"Search topics"}/>
       )}
-    </>
+    </div>
   );
 };
 

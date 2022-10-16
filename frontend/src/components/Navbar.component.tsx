@@ -9,6 +9,7 @@ import {
   sessionNavBar,
 } from "../constant/consts";
 import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
+
 const NavBarComponent = () => {
   const sessionId = localStorage.getItem("item");
   const handleLogOut = async (id: number) => {
@@ -40,6 +41,7 @@ const NavBarComponent = () => {
             </Link>
           </ul>
         ))}
+       
       </Container>
     ) : (
       <Container>
@@ -60,6 +62,7 @@ const NavBarComponent = () => {
             <ul key={id}>
               <Link to={path}>
                 <li onClick={() => handleLogOut(id)}>{icon}</li>
+                 <p>{name}</p>
               </Link>
             </ul>
           ))}
@@ -79,6 +82,7 @@ const NavBarComponent = () => {
             <ul key={id}>
               <Link to={path}>
                 <li>{icon}</li>
+                <p>{name}</p>
               </Link>
             </ul>
           ))}
@@ -92,7 +96,7 @@ const Container = styled.div`
   width: 85%;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 9fr repeat(3, 0.7fr);
+  grid-template-columns: 3.5fr 4fr  repeat(2, 0.7fr);
   grid-column-gap: 15px;
   grid-row-gap: 0px;
 `;
@@ -104,10 +108,12 @@ const MobileContainer = styled.div`
   position: fixed;
   width: 100%;
   padding: 1rem;
+    text-align:center;
   .sessionCss {
     display: grid;
     place-items: center;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+   
   }
 
   .noSessionCss {

@@ -9,7 +9,7 @@ const initialState: IUserTopics = {
   user: profileState,
   currentTab: 1,
   showUploadButton: false,
-  topicsByUser: [],
+  topicsLikedByUser: [],
   usernameClicked: false,
   userNameParams:''
 };
@@ -45,8 +45,8 @@ export const profileSlice = createSlice({
     setShowUploadButton: (state, action: PayloadAction<boolean>) => {
       state.showUploadButton = action.payload;
     },
-    setTopicsByUser: (state, action: PayloadAction<[]>) => {
-      state.topicsByUser = action.payload;
+    setTopicsLikedByUser: (state, action: PayloadAction<[]>) => {
+      state.topicsLikedByUser = action.payload;
     },
     setUsernameClicked: (state, action: PayloadAction<boolean>) => {
       state.usernameClicked = action.payload;
@@ -66,7 +66,7 @@ export const {
   createFirstName,
   createLastName,
   createPassword,
-  setTopicsByUser,
+  setTopicsLikedByUser,
   setCurrentTab,
   createUserName,
 } = profileSlice.actions;

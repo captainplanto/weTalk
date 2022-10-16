@@ -13,6 +13,7 @@ const TopicsComponent = () => {
   const sessionId = localStorage.getItem("item");
   const sessionUser = sessionId ? JSON.parse(sessionId) : "";
   const currentUser = sessionUser.id;
+  
   useEffect(() => {
     try {
       const data = async () => {
@@ -47,8 +48,9 @@ const TopicsComponent = () => {
                   showTopicReplyButton={false}
                   topicOwner={author?.username}
                   showTopicEditButton={true}
-                  image={author?.avatar}
-                  isVoteOnTopic={true} className={"homepage_paperbackground"}                />
+                  image={author.avatar}
+                    userId={author._id}
+                  isVoteOnTopic={true} className={"homepage_paperbackground"} />
               </div>
             )
           )

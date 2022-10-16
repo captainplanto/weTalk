@@ -1,6 +1,7 @@
-import { Avatar, Grid} from "@nextui-org/react";
+import { Avatar, Grid } from "@nextui-org/react";
 import { Schema } from "mongoose";
-import { FC } from "react";
+import { FC} from "react";
+
 
 interface IAvatar {
   src: string;
@@ -9,6 +10,7 @@ interface IAvatar {
 }
 
 const AvatarComponent: FC<IAvatar> = ({ src, id, username, ...props }) => {
+
   if (src) {
     return (
       <Grid.Container>
@@ -31,7 +33,7 @@ export default AvatarComponent;
 const no_avatar = {
   display: "flex",
   backgroundColor: "var( --moderate-blue)",
-  color:'white',
+  color: "white",
   width: "2.3rem",
   margin: "0 auto",
   justifyContent: "center",
@@ -39,3 +41,26 @@ const no_avatar = {
   height: "2.3rem",
   borderRadius: "3rem",
 };
+
+
+/*
+
+
+  useEffect(() => {
+    const getUser = async () => {
+      const userInfo = await fetch(`/api/userprofile/${currentUser}`, {
+        method: "GET",
+      });
+      const userResponse = await userInfo.json();
+      dispatch(userProfileInfo(userResponse.data));
+    };
+
+    getUser();
+  }, []);
+
+
+
+
+
+
+*/

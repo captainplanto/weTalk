@@ -1,49 +1,80 @@
-import React, { useEffect} from "react";
+import { useEffect } from "react";
 import styled from "styled-components";
-import { userProfileInfo } from "../../redux/features/topics";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { IUser } from "../../types/type";
 import { convertDate } from "../../utils/date";
 import PaperBackgroundComponent from "../Comments/PaperBackground.component";
 import TabComponent from "../Tabs.component";
 import ProfileTopicComponent from "./ProfileTopic.component";
-import ProfileLikesComponent from "./ProfileLikes.component";
+//import ProfileLikesComponent from "./ProfileLikes.component";
 import ProfileCommentComponent from "./ProfileComment.component";
-import {  setUsernameClicked } from "../../redux/features/userprofile";
 import { UploadImageComponent } from "./UploadImage.component";
+import { Loading } from "@nextui-org/react";
+import { ITopic, IUser } from "../../types/type";
+import { userProfileClickedInfo } from "../../redux/features/topics";
+import { setTopicsLikedByUser } from "../../redux/features/userprofile";
 
 const ProfileComponent = () => {
-  const { userProfile } = useAppSelector((state) => state.topic);
-  const { currentTab} = useAppSelector((state) => state.profile);
- 
+  const { userProfileClicked } = useAppSelector((state) => state.topic);
+  const { topicsLikedByUser } = useAppSelector((state) => state.profile);
+  const { currentTab } = useAppSelector((state) => state.profile);
   const dispatch = useAppDispatch();
-  const sessionid = localStorage.getItem("item");
-  const sessionUser = sessionid ? JSON.parse(sessionid) : "";
-  const currentUser = sessionUser.username;
+  const renderUserTopicOnload = localStorage.getItem("usernameClicked");
+  const userNameClicked = renderUserTopicOnload
+    ? JSON.parse(renderUserTopicOnload)
+    : "";
 
   useEffect(() => {
-    const getUser = async () => {
-      const userInfo = await fetch(`/api/userprofile/${currentUser}`, {
+    const fetchUserClickObject = async () => {
+      const userObject = await fetch(`/api/user/topics/${userNameClicked}`, {
         method: "GET",
       });
-      const userResponse = await userInfo.json();
-      dispatch(userProfileInfo(userResponse.data));
-    
-    };
-    const itemInStorage = localStorage.getItem("state");
-    const getItemInStorage = itemInStorage ? JSON.parse(itemInStorage) : "";
-    if (getItemInStorage === true) {
-      dispatch(setUsernameClicked(true));
-    } else {
-      dispatch(setUsernameClicked(false));
-    }
+      if (userObject.status === 200) {
+        const { data } = await userObject.json();
+        dispatch(userProfileClickedInfo(data));
+      }
+     else if (userObject.status === 400) {
+        console.log("error fetching user-details from database");
+      }
 
-    getUser();
+      const userLikesOnTopics = await fetch(
+        `/api/user/topics/likes/${userNameClicked}`,
+        {
+          method: "GET",
+        }
+      );
+      const { message, success, data } = await userLikesOnTopics.json();
+      if (userLikesOnTopics.status === 200) {
+        console.log(data, "USERLikedTopics");
+        dispatch(setTopicsLikedByUser(data));
+      } else if (userLikesOnTopics.status === 400) {
+        console.log(message, success);
+      }
+
+      const userCommentsOnTopics = await fetch(
+        `/api/user/topics/comments/${userNameClicked}`,
+        {
+          method: "GET",
+        }
+      );
+   
+      if (userCommentsOnTopics.status === 200) {
+       const { message, success, data } = await userCommentsOnTopics.json();
+        console.log(data, "CommentsTopics");
+        // dispatch(setTopicsLikedByUser(data))
+      } else if (userLikesOnTopics.status === 400) {
+        console.log(message, success);
+      }
+    };
+
+
+    fetchUserClickObject();
   }, []);
 
-  if (userProfile) {
-    const { firstName, lastName, username, dob, email, createdAt, avatar } =
-      userProfile as IUser;
+  if (userProfileClicked) {
+    const { username, avatar, firstName, lastName, dob, email, createdAt } =
+      userProfileClicked as IUser;
+    const { topics } = userProfileClicked as any;
+
     return (
       <ProfileContainer>
         <div>
@@ -56,16 +87,19 @@ const ProfileComponent = () => {
             <li>Joined {createdAt ? convertDate(createdAt) : ""} ago</li>
           </ul>
         </div>
+
         <div>
           <TabComponent />
           {currentTab === 1 ? (
-            <ProfileTopicComponent />
+            <ProfileTopicComponent clickedUserTopics={topics} />
           ) : currentTab === 2 ? (
             <ProfileCommentComponent />
           ) : currentTab === 3 ? (
-            <ProfileLikesComponent />
+            <ProfileTopicComponent
+              topicsLikedByClickedUser={topicsLikedByUser}
+            />
           ) : (
-            <ProfileTopicComponent />
+            <ProfileTopicComponent clickedUserTopics={topics} />
           )}
         </div>
         <PaperBackgroundComponent className="profile_paper">
@@ -78,7 +112,18 @@ const ProfileComponent = () => {
       </ProfileContainer>
     );
   }
-  return <h3>No profile info yet</h3>;
+  return (
+    <Loading
+      type="points-opacity"
+      size="xs"
+      style={{
+        alignItems: "center",
+        justifyContent: "center",
+        display: "flex",
+        height: "100vh",
+      }}
+    />
+  );
 };
 
 export default ProfileComponent;
@@ -101,3 +146,37 @@ const ProfileContainer = styled.div`
     }
   }
 `;
+
+/*
+
+
+  const itemInStorage = localStorage.getItem("state");
+  const getItemInStorage = itemInStorage ? JSON.parse(itemInStorage) : "";
+
+  useEffect(() => {
+    if (getItemInStorage === true) {
+      dispatch(setUsernameClicked(true));
+    } else {
+      dispatch(setUsernameClicked(false));
+    }
+  }, []);
+
+
+
+
+
+
+  return (
+    <Loading
+      type="points-opacity"
+      size="xs"
+      style={{
+        alignItems: "center",
+        justifyContent: "center",
+        display: "flex",
+        height: "100vh",
+      }}
+    />
+  );
+
+*/

@@ -44,8 +44,10 @@ export interface IDbcomments {
   replyTopic: string;
   openReplyToBox: boolean;
   toggleMode: boolean;
-  userProfile: IUser | undefined;
+  userProfileClicked: IUser | undefined;
   loginSuccessful: boolean;
+  querySearchResult:ITopic[];
+  query:string;
 }
 
 export interface IRegister {
@@ -78,7 +80,7 @@ export interface IUserTopics {
   user: IUser,
   currentTab: number,
   showUploadButton:boolean,
-  topicsByUser: ITopic[];
+  topicsLikedByUser: ITopic[];
   usernameClicked:boolean;
   userNameParams:string|ReactNode|undefined;
 

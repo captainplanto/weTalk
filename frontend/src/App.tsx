@@ -12,8 +12,9 @@ import NavBarComponent from "./components/Navbar.component";
 import AllTopics from "./pages/alltopic";
 import NewTopic from "./pages/newtopic";
 import TopicComment from "./pages/topiccomment";
-import ProfileComponent from "./components/userprofiles/Profile.component";
 import { ToggleSwitch } from "./redux/features/topics";
+import ProfileComponent from "./components/userprofiles/Profile.component";
+
 
 const App = () => {
   const { toggleMode } = useAppSelector((state) => state.topic);
@@ -51,6 +52,7 @@ const App = () => {
         <Route path="/register" element={<RegisterUser />} />
         <Route path="/profile" element={<ProfileComponent />} />
         <Route path="/topiccomment" element={<TopicComment />} />
+        
       </Routes>
     </AppContainer>
   );

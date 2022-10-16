@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {  useState } from "react";
 import { toast } from "react-toastify";
 import { useAppSelector } from "../../redux/hooks";
 import { IUser } from "../../types/type";
@@ -16,6 +16,7 @@ export const UploadImageComponent = ({
   const sessionid = localStorage.getItem("item");
   const sessionUser = sessionid ? JSON.parse(sessionid) : "";
   const currentUser = sessionUser.username;
+
   const previewFiles = (file: any) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);

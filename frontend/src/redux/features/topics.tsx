@@ -6,11 +6,13 @@ const initialState: IDbcomments = {
   databaseTopics: [],
   newtopic: "",
   toggleMode: false,
-  userProfile: undefined,
+  userProfileClicked: undefined,
   loginSuccessful: false,
   openReplyToBox: true,
   replyTopic: "",
   databaseReplyTopic: undefined,
+  querySearchResult: [],
+  query: "",
 };
 
 export const topicSlice = createSlice({
@@ -40,11 +42,17 @@ export const topicSlice = createSlice({
       state.toggleMode = action.payload;
     },
 
-    userProfileInfo: (state, action: PayloadAction<any>) => {
-      state.userProfile = action.payload;
+    userProfileClickedInfo: (state, action: PayloadAction<any>) => {
+      state.userProfileClicked = action.payload;
     },
     loginState: (state, action: PayloadAction<boolean>) => {
       state.loginSuccessful = action.payload;
+    },
+    setQuerySearch: (state, action: PayloadAction<any>) => {
+      state.querySearchResult = action.payload;
+    },
+    setQuery: (state, action: PayloadAction<string>) => {
+      state.query = action.payload;
     },
   },
 });
@@ -56,7 +64,9 @@ export const {
   dbReplyTopic,
   replyToTopic,
   ToggleSwitch,
-  userProfileInfo,
+  userProfileClickedInfo,
+  setQuerySearch,
+  setQuery,
   loginState,
 } = topicSlice.actions;
 export const topic = (state: AppState) => state.topic;

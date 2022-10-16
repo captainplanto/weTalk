@@ -1,62 +1,78 @@
-import React from "react";
+import { FC } from "react";
 import styled from "styled-components";
-
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { ITopic } from "../../types/type";
 import { convertDate } from "../../utils/date";
 import CardComponent from "../Card.component";
-import PaperBackgroundComponent from "../Comments/PaperBackground.component";
+//import PaperBackgroundComponent from "../Comments/PaperBackground.component";
 
-const ProfileTopicComponent = () => {
-  const { topicsByUser } = useAppSelector((state) => state.profile);
+interface IClickProfile {
+  clickedUserTopics?: ITopic[];
+  topicsLikedByClickedUser?: ITopic[];
+  topicsCommentedOnByClickedUser?: ITopic[];
+}
+
+const ProfileTopicComponent: FC<IClickProfile> = ({
+  clickedUserTopics,
+  topicsCommentedOnByClickedUser,
+  topicsLikedByClickedUser,
+}) => {
   const sessionId = localStorage.getItem("item");
   const sessionUser = sessionId ? JSON.parse(sessionId) : "";
   const currentUser = sessionUser.username;
 
-    console.log(topicsByUser)
-   //const { userNameParams } = useAppSelector((state) => state.profile);
-  const dispatch = useAppDispatch();
- /*useEffect(() => {
-    const get = async () => {
-      const userTopic = await fetch(`/api/user/topics/${userNameParams}`, {
-        method: "GET",
-      });
-
-      const { data } = await userTopic.json();
-      dispatch(setTopicsByUser(data));
-    };
-    get();
-  }, []);
-*/
   return (
     <Container>
-      {topicsByUser && topicsByUser.length > 0 ? (
-        topicsByUser.map(
-          ({ topic, _id, createdAt, author, username }: ITopic, index) => (
-            <div key={index} className="all-posts">
-              <CardComponent
-                username={author?.username}
-                remove={currentUser === author?._id ? "Delete" : ""}
-                reply={"Reply"}
-                edit={currentUser === author?._id ? "Edit" : ""}
-                topic={topic}
-                timestamp={`${convertDate(createdAt)} ago`}
-                id={_id}
-                showTopicDeleteButton={true}
-                showTopicReplyButton={false}
-                topicOwner={author?.username}
-                showTopicEditButton={true}
-                image={author?.avatar}
-                isVoteOnTopic={true}
-              />
-            </div>
+      {clickedUserTopics && clickedUserTopics.length > 0
+        ? clickedUserTopics.map((
+              { topic, _id, createdAt, author, username }: ITopic,
+              index: number
+            ) => (
+              <div key={index} className="all-posts">
+                <CardComponent
+                  username={author?.username}
+                  remove={currentUser === author?._id ? "Delete" : ""}
+                  reply={"Reply"}
+                  edit={currentUser === author?._id ? "Edit" : ""}
+                  topic={topic}
+                  timestamp={`${convertDate(createdAt)} ago`}
+                  id={_id}
+                  showTopicDeleteButton={true}
+                  showTopicReplyButton={false}
+                  topicOwner={author?.username}
+                  showTopicEditButton={true}
+                  image={author?.avatar}
+                  isVoteOnTopic={true}
+                  userId={author?._id}
+                />
+              </div>
+            )
           )
-        )
-      ) : (
-        <PaperBackgroundComponent>
-          <h5 className="color">No post created yet by user.</h5>
-        </PaperBackgroundComponent>
-      )}
+        : topicsLikedByClickedUser && topicsLikedByClickedUser.length > 0
+        ? topicsLikedByClickedUser.map((
+              { topic, _id, createdAt, author, username }: ITopic,
+              index: number
+            ) => (
+              <div key={index} className="all-posts">
+                <CardComponent
+                  username={author[0].username}
+                  remove={currentUser === author?._id ? "Delete" : ""}
+                  reply={"Reply"}
+                  edit={currentUser === author?._id ? "Edit" : ""}
+                  topic={topic}
+                  timestamp={`${convertDate(createdAt)} ago`}
+                  id={_id}
+                  showTopicDeleteButton={true}
+                  showTopicReplyButton={false}
+                  topicOwner={author?.username}
+                  showTopicEditButton={true}
+                  image={author[0].avatar}
+                  isVoteOnTopic={true}
+                  userId={author?._id}
+                />
+              </div>
+            )
+          )
+        : ""}
     </Container>
   );
 };
@@ -71,3 +87,13 @@ const Container = styled.div`
     color: var(--moderate-blue);
   }
 `;
+
+/*
+
+
+   <PaperBackgroundComponent>
+          <h5 className="color">No post created yet by users.</h5>
+        </PaperBackgroundComponent>
+
+
+*/
