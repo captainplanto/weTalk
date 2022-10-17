@@ -48,6 +48,7 @@ export interface IDbcomments {
   loginSuccessful: boolean;
   querySearchResult:ITopic[];
   query:string;
+  mobileSearchBar:boolean;
 }
 
 export interface IRegister {

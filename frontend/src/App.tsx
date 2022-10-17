@@ -1,4 +1,4 @@
-import  { useEffect } from "react";
+import { useEffect } from "react";
 import styled from "styled-components";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -14,11 +14,16 @@ import NewTopic from "./pages/newtopic";
 import TopicComment from "./pages/topiccomment";
 import { ToggleSwitch } from "./redux/features/topics";
 import ProfileComponent from "./components/userprofiles/Profile.component";
-
+import { SearchResult } from "./pages/searchresult";
 
 const App = () => {
   const { toggleMode } = useAppSelector((state) => state.topic);
   const dispatch = useAppDispatch();
+
+  const sessionId = localStorage.getItem("item");
+  const sessionUser = sessionId ? JSON.parse(sessionId) : "";
+  const currentUser = sessionUser.id;
+
   useEffect(() => {
     const themeInStorage = localStorage.getItem("theme");
     const showTheme = themeInStorage ? JSON.parse(themeInStorage) : "";
@@ -36,8 +41,8 @@ const App = () => {
         minHeight: "100vh",
       }}
     >
-      <ToggleComponent />
-      <NavBarComponent />
+      {currentUser ? <ToggleComponent /> : ""}
+
       <ToastContainer
         className="toast-position"
         position="bottom-right"
@@ -49,10 +54,10 @@ const App = () => {
         <Route path="/newtopic" element={<NewTopic />} />
         <Route path="/login" element={<LoginUser />} />
         <Route path="/logout" element={<LoginUser />} />
+        <Route path="/searchresult" element={<SearchResult />} />
         <Route path="/register" element={<RegisterUser />} />
         <Route path="/profile" element={<ProfileComponent />} />
         <Route path="/topiccomment" element={<TopicComment />} />
-        
       </Routes>
     </AppContainer>
   );

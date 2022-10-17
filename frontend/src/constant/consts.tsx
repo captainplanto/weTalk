@@ -50,22 +50,10 @@ export const Mail = ({ fill, size, height, width, ...props }: IRegister) => {
     </svg>
   );
 };
-
 export const TabContents = [
-  {
-    id: 1,
-    title: "Topics",
-  },
-
-  {
-    id: 2,
-    title: "Comments",
-  },
-
-  {
-    id: 3,
-    title: "Likes",
-  },
+  {id: 1,title: "Topics"},
+  {id: 2,title: "Comments"},
+  {id: 3,title: "Likes"},
 ];
 
 export const CurrentUserImage = () => {
@@ -77,18 +65,13 @@ export const CurrentUserImage = () => {
   useEffect(() => {
     try {
       const data = async () => {
-        const currentUserAvatar = await fetch(
-          `/api/userprofile/${currentUser}`,
-          {
+        const currentUserAvatar = await fetch(`/api/userprofile/${currentUser}`,{
             method: "GET",
           }
         );
-
         const currrentUserAvatarResponse = await currentUserAvatar.json();
         setAvatar(currrentUserAvatarResponse.data.avatar);
-       // console.log(currrentUserAvatarResponse.data);
       };
-
       data();
     } catch (err) {
       console.log(err);
@@ -104,38 +87,40 @@ export const CurrentUserImage = () => {
   );
 };
 
+export const SearchBar = () => {
+  return (
+    <SearchComponent
+      type="text"
+      name={"search"}
+      placeholder={"Find topic here"}
+    />
+  );
+};
+
 export const noSessionNavBar = [
   { name: "HOME", path: "/", id: 1 },
-  { name: "LOGIN", path: "/login", id: 2 },
-  { name: "REGISTER", path: "/register", id: 3 },
+   {name: (<SearchBar />),path: "#", id: 2},
+  { name: "LOGIN", path: "/login", id: 3 },
+  { name: "REGISTER", path: "/register", id: 4 },
 ];
 
 export const sessionNavBar = [
   { name: "HOME", path: "/", id: 1 },
-  {
-    name: (
-      <SearchComponent
-        type="text"
-        name={"search"}
-        placeholder={"Find topic here"}
-      />
-    ),
-    path: "",
-    id: 6,
-  },
-  { name: "LOGOUT", path: "/", id: 2 },
-  { name: "CREATE TOPIC", path: "/newtopic", id: 3 },
+  {name: (<SearchBar />),path: "#", id: 2},
+  { name: "LOGOUT", path: "/", id: 3 },
+  { name: "CREATE TOPIC", path: "/newtopic", id: 4 },
 ];
+
 export const mobileNavBarSession = [
   { name: "HOME", path: "/", id: 1, icon: <HomeIcon /> },
-  { name: "SEARCH", path: "/login", id: 3, icon: <SearchIcon /> },
-  { name: "LOGOUT", path: "/login", id: 2, icon: <LogoutIcon /> },
+  { name: "SEARCH", path: "#", id: 2, icon: <SearchIcon /> },
+  { name: "LOGOUT", path: "/login", id: 3, icon: <LogoutIcon /> },
   { name: "PROFILE", path: "/currentuser", id: 4, icon: <CurrentUserImage /> },
 ];
 
 export const mobileNavBarNoSession = [
   { name: "HOME", path: "/", id: 1, icon: <HomeIcon /> },
-  { name: "SEARCH", path: "/login", id: 2, icon: <SearchIcon /> },
+  { name: "SEARCH", path: "#", id: 2, icon: <SearchIcon /> },
   { name: "LOGIN", path: "/login", id: 3, icon: <LoginIcon /> },
   { name: "REGISTER", path: "/register", id: 4, icon: <LockOpenIcon /> },
 ];

@@ -8,7 +8,11 @@ const LoginUser = () => {
 
   if (loginSuccessful === false) {
     return (
-      <div>
+      <div   style={{
+         display: "grid",
+          placeContent: "center",
+          height: "100vh",
+        }}>
         <RegisterComponent signIn={true} />
       </div>
     );

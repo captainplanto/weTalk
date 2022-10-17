@@ -13,6 +13,7 @@ const initialState: IDbcomments = {
   databaseReplyTopic: undefined,
   querySearchResult: [],
   query: "",
+  mobileSearchBar:false,
 };
 
 export const topicSlice = createSlice({
@@ -54,6 +55,9 @@ export const topicSlice = createSlice({
     setQuery: (state, action: PayloadAction<string>) => {
       state.query = action.payload;
     },
+     setMobileSearchBar: (state, action: PayloadAction<boolean>) => {
+      state.mobileSearchBar= action.payload;
+    },
   },
 });
 
@@ -68,6 +72,7 @@ export const {
   setQuerySearch,
   setQuery,
   loginState,
+  setMobileSearchBar
 } = topicSlice.actions;
 export const topic = (state: AppState) => state.topic;
 export default topicSlice.reducer;

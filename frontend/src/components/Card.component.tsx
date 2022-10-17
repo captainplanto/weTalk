@@ -1,4 +1,4 @@
-import React, { FC,  ReactNode,  useState } from "react";
+import React, { FC,    useState } from "react";
 import styled from "styled-components";
 import AvaterComponent from "./Avater.component";
 import VoteComponent from "./Vote.component";

@@ -1,20 +1,24 @@
-import React, { useState } from "react";
 import styled from "styled-components";
-import { SearchResultComponent } from "../components/Search.component";
-
+import NavBarComponent from "../components/Navbar.component";
+import { SearchComponent } from "../components/Search.component";
 import TopicsComponent from "../components/Topics.component";
 import { useAppSelector } from "../redux/hooks";
 
 const Home = () => {
-  //const [showSearchResult, setShowSearchResult] = useState<boolean>(false);
- const { querySearchResult } = useAppSelector((state) => state.topic);
+   const {  mobileSearchBar  } = useAppSelector((state) => state.topic);
   return (
     <Container>
-      {querySearchResult.length === 0 ? (
-        <TopicsComponent />
+      {mobileSearchBar ? (
+        <SearchComponent
+          type={"text"}
+          name={"search"}
+          placeholder={"Find topic here"}
+        />
       ) : (
-        <SearchResultComponent  />
+        ""
       )}
+       <NavBarComponent />
+      <TopicsComponent />
     </Container>
   );
 };
