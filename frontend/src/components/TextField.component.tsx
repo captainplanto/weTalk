@@ -33,29 +33,25 @@ const TextFieldComponent: FC<IInput> = ({
   const { openReplyToBox } = useAppSelector((state) => state.topic);
   return (
     <div>
-      {name !== "textbox" ? (
-        openReplyToBox ? (
-          <Outer style={{ marginTop: "1rem" }}>
-            <PaperBackgroundComponent className="padding">
-              <Container>
-                <div>
-                  <textarea
-                    value={value}
-                    style={{ ...style }}
-                    onChange={onChange}
-                    defaultValue={defaultValue}
-                    name={name}
-                  />
-                </div>
-                <div>{children}</div>
-              </Container>
-            </PaperBackgroundComponent>
-          </Outer>
-        ) : (
-          ""
-        )
+      {openReplyToBox ? (
+        <Outer style={{ marginTop: "1rem" }}>
+          <PaperBackgroundComponent className="homepage_paperbackground">
+            <Container>
+              <div>
+                <textarea
+                  value={value}
+                  style={{ ...style }}
+                  onChange={onChange}
+                  defaultValue={defaultValue}
+                  name={name}
+                />
+              </div>
+              <div>{children}</div>
+            </Container>
+          </PaperBackgroundComponent>
+        </Outer>
       ) : (
-       <SearchComponent type={""} name={"textbox"} placeholder={"Search topics"}/>
+        ""
       )}
     </div>
   );

@@ -1,15 +1,15 @@
-import React from 'react'
+import React from "react";
+import NavBarComponent from "../components/Navbar.component";
 
-import ProfileComponent from '../components/userprofiles/Profile.component'
+import ProfileComponent from "../components/userprofiles/Profile.component";
 
-
-
-const  profile=()=> {
+const profile = () => {
   return (
     <div>
-   
-    <ProfileComponent/></div>
-  )
-}
+      
+      <ProfileComponent />
+    </div>
+  );
+};
 
-export default profile
+export default profile;

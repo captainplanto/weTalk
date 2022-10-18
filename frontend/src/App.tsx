@@ -37,7 +37,7 @@ const App = () => {
   return (
     <AppContainer
       style={{
-        backgroundColor: toggleMode ? "rgb(36, 52, 71)" : "",
+        backgroundColor: !toggleMode ? "rgb(36, 52, 71)" : "",
         height: "100vh",
       }}
     >
@@ -52,9 +52,10 @@ const App = () => {
         <Route path="/login" element={<LoginUser />} />
         <Route path="/logout" element={<LoginUser />} />
       </Routes>
+
       <React.Fragment>
         {currentUser ? <ToggleComponent /> : ""}
-        <NavBarComponent />
+       
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/alltopic" element={<AllTopics />} />

@@ -1,7 +1,6 @@
-
 import React from "react";
 import styled from "styled-components";
-import { replyToTopic} from "../../redux/features/topics";
+import { replyToTopic } from "../../redux/features/topics";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { IComment, ITopic } from "../../types/type";
 import { convertDate } from "../../utils/date";
@@ -18,18 +17,21 @@ const CommentComponent = () => {
   const sessionId = localStorage.getItem("item");
   const sessionUser = sessionId ? JSON.parse(sessionId) : "";
   const userPin = sessionUser.id;
-  const handleReplyChange = (e: React.ChangeEvent<HTMLTextAreaElement>| React.ChangeEvent<HTMLInputElement>) => {
+  const handleReplyChange = (
+    e:
+      | React.ChangeEvent<HTMLTextAreaElement>
+      | React.ChangeEvent<HTMLInputElement>
+  ) => {
     e.preventDefault();
     dispatch(replyToTopic(e.target.value));
   };
 
   if (databaseReplyTopic) {
-    const { topic, comments, createdAt, author, username, _id } = databaseReplyTopic as ITopic;
+    const { topic, comments, createdAt, author, username, _id } =
+      databaseReplyTopic as ITopic;
     const topicID = _id;
     return (
-
       <div>
-      
         <CardComponent
           id={topicID}
           topic={topic}
@@ -43,13 +45,14 @@ const CommentComponent = () => {
           showTopicEditButton={true}
           isVoteOnTopic={true}
           image={author?.avatar}
+          className={"homepage_paperbackground"}
+         
         />
 
         {comments && comments.length > 0 ? (
           comments.map(({ _id, reply, votes, author }: IComment, index) => (
-            <CommentContainer key={index}      style={{ marginTop: "1rem"}}>
+            <CommentContainer key={index} style={{ marginTop: "1rem" }}>
               <CardComponent
-           
                 id={_id}
                 topic={reply}
                 username={author?.username}
@@ -62,12 +65,13 @@ const CommentComponent = () => {
                 showTopicEditButton={false}
                 isVoteOnTopic={false}
                 image={author?.avatar}
+                className={"homepage_paperbackground"}
               />
             </CommentContainer>
           ))
         ) : (
           <>
-            <PaperBackgroundComponent>
+            <PaperBackgroundComponent className="homepage_paperbackground">
               <h4>
                 No comments yet on this post. Be the first person to leave a
                 comment.

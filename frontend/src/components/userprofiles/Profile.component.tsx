@@ -78,8 +78,9 @@ const ProfileComponent = () => {
 
     return (
       <>
+       <NavBarComponent />
       <ProfileContainer>
-      
+     
         <div>
           <UploadImageComponent username={username} avatar={avatar} />
           <ul>

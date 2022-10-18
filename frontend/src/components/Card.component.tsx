@@ -84,14 +84,14 @@ const CardComponent: FC<ICard> = ({
     e.preventDefault();
     dispatch(createTopic(e.target.value));
   };
-
+//repeat(5, 1fr)
   return (
     <>
       <PaperBackgroundComponent className={className}>
         <CardContainer
           style={{
             gridTemplateColumns:
-              window.innerWidth <= 500 ? "repeat(5, 1fr)" : "",
+              window.innerWidth <= 500 ? " 0.2fr 0.2fr 0.4fr 1fr 0.4fr " : "",
             gridColumnGap: window.innerWidth <= 500 ? "8px" : "",
           }}
         >
@@ -205,13 +205,14 @@ const CardComponent: FC<ICard> = ({
 };
 
 export default CardComponent;
-
+// grid-template-columns: repeat(6, 1fr);
+//  grid-template-rows: repeat(1, 1fr);
 const CardContainer = styled.div<{ show?: boolean }>`
   display: grid;
   align-items: center;
-  grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: repeat(1, 1fr);
-  grid-column-gap: 12px;
+  grid-template-columns:0.6fr 0.4fr 0.9fr repeat(3, 1fr);
+
+ 
   grid-row-gap: 6px;
   .vote_component {
     grid-area: 1 / 1 / 3 / 2;
@@ -230,7 +231,7 @@ const CardContainer = styled.div<{ show?: boolean }>`
   }
 
   .remove {
-    grid-area: 1 / 7 / 2 / 6;
+    grid-area: 1 / 5 / 2 / 6;
   }
   .edit {
     grid-area: 1 / 8 / 2 / 7;
