@@ -5,7 +5,7 @@ import {
   registerUserInfo,
   signInUser,
   UserProfileJpg,
-} from "./users/userposts/user";
+} from "./userposts/user";
 import {
   allCommentedTopicByUser,
   allLikedTopicByUser,
@@ -18,7 +18,7 @@ import {
   getReplyToTopic,
   getTopic,
   userData,
-} from "./users/userposts/topic";
+} from "./userposts/topic";
 import {
   downVoteComment,
   downVoteTopic,
@@ -26,7 +26,7 @@ import {
   getUpVoteTopic,
   upVoteComment,
   upVoteTopic,
-} from "./users/userposts/votes";
+} from "./userposts/votes";
 import { CloudinaryMiddleware } from "../cloudinary/index";
 
 export const router = express.Router();

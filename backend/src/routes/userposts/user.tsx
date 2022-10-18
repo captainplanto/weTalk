@@ -1,7 +1,19 @@
 import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import User from "../../../models/user.model";
+import User from "../../models/user.model";
 export const router = express.Router();
+import nodemailer from "nodemailer";
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  port: 465,
+  host: "smtp.gmail.com",
+  auth: {
+    user: process.env.GOOGLE_MAIL_USERNAME,
+    //create AppPassword in google
+    pass: process.env.GOOGLE_APP_PASSWORD,
+  },
+  secure: true,
+});
 
 //Register User using has, bcrypt && salt
 
@@ -35,6 +47,20 @@ export const registerUser = async (req: Request, res: Response) => {
     try {
       if (!exisitingUserName && !exisitingEmail) {
         const savedNewUser = await newUser.save();
+        const mailData = {
+          from: process.env.GOOGLE_MAIL_USERNAME,
+          to: email,
+          subject: "Welcome to WeTalk",
+          text: "Welcome to weTalk Community",
+          html: `Hey ${firstName} ${lastName}! Welcome to WeTalk, create topics and like posts`,
+        };
+        transporter.sendMail(mailData, (error, data) => {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(data);
+          }
+        });
         res.status(200).json({
           message: `New user, ${firstName}  ${lastName} was succesfully created successfully`,
           success: true,

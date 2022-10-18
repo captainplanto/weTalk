@@ -1,13 +1,13 @@
 import express, { Request, Response } from "express";
-import Topic from "../../../models/topic.model";
-import Comment from "../../../models/comment.model";
+import Topic from "../../models/topic.model";
+import Comment from "../../models/comment.model";
 import {
   TOPIC_MODEL_AUTHOR,
   TOPIC_MODEL_COMMENT,
   USER_MODEL_COMMENTS,
   USER_TOPICS_MODEL,
-} from "../../../queries/db.populate";
-import User from "../../../models/user.model";
+} from "../../queries/db.populate";
+import User from "../../models/user.model";
 import mongoose from "mongoose";
 
 export const AuthenticateUser = async (

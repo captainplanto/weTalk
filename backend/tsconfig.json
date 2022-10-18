@@ -16,10 +16,12 @@
     
   },
   },
-  "include": ["**/*.ts", "**/*.tsx", "src/routes/users/userposts"],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"],
   "ts-node": {
     "esm": true,
    // "experimentalSpecifierResolution": true
   }
 }
+
+//"src/routes/userposts"

@@ -52,19 +52,4 @@ declare module "express-session" {
 
 
 
-/*
 
-  comments: IComment[];
-  commentRepliedTo: IComment[];
-  authorRepliedTo: IUser;
-*/
-
-
-
-
-
-
-
-
-
-//export interface UserModelType extends PassportLocalModel<IUser>{};

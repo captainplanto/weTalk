@@ -1,19 +1,13 @@
 import express, { Request, Response } from "express";
-import User from "../../../models/user.model";
-import Topic from "../../../models/topic.model";
-import Comment from "../../../models/topic.model";
-//import { VOTES_ON_TOPIC } from "../../../queries/db.populate";
-
+import Topic from "../../models/topic.model";
+import Comment from "../../models/comment.model";
 
 // The votes component for the Topic created.
-
+//.$where({votes: sessionId,});
 export const upVoteTopic = async (req: Request, res: Response) => {
   const topicId = req.params.id;
   const sessionId = req.body.increaseVote;
-  const findVoteOnTopic = await Topic.findById(topicId).where({
-    votes: sessionId,
-  });
-
+  const findVoteOnTopic = await Topic.findOne({ _id: topicId })
   try {
     if (req.session.user.id) {
       if (!findVoteOnTopic) {
@@ -110,25 +104,13 @@ export const getUpVoteTopic = async (req: Request, res: Response) => {
   }
 };
 
-
-
-
-
-
-
-
-
-
-
-
 // The votes component for the Comment created.
 export const upVoteComment = async (req: Request, res: Response) => {
   const commentId = req.params.id;
   const sessionId = req.body.increaseVote;
   const session = req.session.user;
-  const findVoteOnComment = await Comment.findById(commentId).where({
-    votes: sessionId,
-  });
+  const findVoteOnComment = await Comment.findOne({_id:commentId})
+  //.$where({votes: sessionId,});
   try {
     if (session) {
       if (!findVoteOnComment) {
@@ -164,24 +146,12 @@ export const upVoteComment = async (req: Request, res: Response) => {
   }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const downVoteComment = async (req: Request, res: Response) => {
   const commentId = req.params.id;
   const sessionId = req.body.increaseVote;
-  const findVoteOnComment = await Comment.findById(commentId, { votes: sessionId });
+  const findVoteOnComment = await Comment.findById(commentId, {
+    votes: sessionId,
+  });
   try {
     if (req.session.user.id) {
       if (findVoteOnComment) {
@@ -217,7 +187,7 @@ export const downVoteComment = async (req: Request, res: Response) => {
 export const getUpVoteComment = async (req: Request, res: Response) => {
   const commentId = req.params.id;
   const getVotesOnComment = await Comment.findById(commentId);
- 
+
   try {
     if (getVotesOnComment) {
       res.status(200).json({
