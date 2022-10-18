@@ -5,6 +5,21 @@ import { useAppSelector } from "../redux/hooks";
 
 const LoginUser = () => {
   const { loginSuccessful } = useAppSelector((state) => state.topic);
+  return (
+    <>
+      <LoginImageBoiler>
+        <RegisterComponent signIn={true} />
+      </LoginImageBoiler>
+    </>
+  );
+};
+
+export default LoginUser;
+
+/*
+
+
+
   if (loginSuccessful === false) {
     return (
       <>
@@ -20,6 +35,13 @@ const LoginUser = () => {
       </LoginImageBoiler>
     );
   }
-};
 
-export default LoginUser;
+
+
+
+
+
+
+
+
+*/

@@ -12,6 +12,7 @@ import { Loading } from "@nextui-org/react";
 import { ITopic, IUser } from "../../types/type";
 import { userProfileClickedInfo } from "../../redux/features/topics";
 import { setTopicsLikedByUser } from "../../redux/features/userprofile";
+import NavBarComponent from "../Navbar.component";
 
 const ProfileComponent = () => {
   const { userProfileClicked } = useAppSelector((state) => state.topic);
@@ -76,7 +77,9 @@ const ProfileComponent = () => {
     const { topics } = userProfileClicked as any;
 
     return (
+      <>
       <ProfileContainer>
+      
         <div>
           <UploadImageComponent username={username} avatar={avatar} />
           <ul>
@@ -110,6 +113,7 @@ const ProfileComponent = () => {
           <h6> Anthony Awoniyi </h6>
         </PaperBackgroundComponent>
       </ProfileContainer>
+      </>
     );
   }
   return (

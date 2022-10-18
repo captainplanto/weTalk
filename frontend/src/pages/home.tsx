@@ -17,7 +17,7 @@ const Home = () => {
       ) : (
         ""
       )}
-       <NavBarComponent />
+    
       <TopicsComponent />
     </Container>
   );

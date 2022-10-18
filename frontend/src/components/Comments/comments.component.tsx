@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { IComment, ITopic } from "../../types/type";
 import { convertDate } from "../../utils/date";
 import CardComponent from "../Card.component";
+import NavBarComponent from "../Navbar.component";
 import TextFieldComponent from "../TextField.component";
 import TopicReplyButtonComponent from "../TopicReplyButton.component";
 import PaperBackgroundComponent from "./PaperBackground.component";
@@ -26,7 +27,9 @@ const CommentComponent = () => {
     const { topic, comments, createdAt, author, username, _id } = databaseReplyTopic as ITopic;
     const topicID = _id;
     return (
+
       <div>
+      
         <CardComponent
           id={topicID}
           topic={topic}
