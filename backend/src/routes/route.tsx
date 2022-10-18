@@ -32,7 +32,7 @@ import { CloudinaryMiddleware } from "../cloudinary/index";
 export const router = express.Router();
 
 //Register users
-router.post("/newuser", registerUser);
+router.post("/create/new/user", registerUser);
 router.get("/userprofile/:username", registerUserInfo);
 
 //SignIN Users

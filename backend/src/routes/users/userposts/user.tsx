@@ -6,75 +6,95 @@ export const router = express.Router();
 //Register User using has, bcrypt && salt
 
 export const registerUser = async (req: Request, res: Response) => {
-  const { firstName, lastName, username, dob, email, password } = req.body.firstTimeUser;
-  const hashPassword = await bcrypt.hash(password, 16);
-  const newUser = new User({
-    firstName,
-    lastName,
-    username,
-    dob,
-    email,
-    password: hashPassword,
-  });
-  try {
-    const dbUsers = await User.findOne({ username: username });
-    if (!dbUsers) {
-      const savedNewUser = await newUser.save();
-      res.status(200).json({
-        message: `new user, ${firstName}  ${lastName} was succesfully created successfully`,
-        success: true,
-        data: savedNewUser,
-      });
-    } else {
-      res.status(400).json({
-        message: "Existing user, please register with another credential",
-        success: false,
-      });
-    
-    }
-  } catch (err) {
-    res.status(500).json({
-      message: "cannot create user",
+  const { firstName, lastName, username, dob, email, password } =
+    req.body.firstTimeUser;
+  if (
+    firstName === "" ||
+    lastName === "" ||
+    username === "" ||
+    dob === "" ||
+    email === "" ||
+    password === ""
+  ) {
+    res.status(404).json({
+      message: "One or more of the inputs are empty",
       success: false,
     });
-    console.log(err);
+  } else {
+    const hashPassword = await bcrypt.hash(password, 16);
+    const newUser = new User({
+      firstName,
+      lastName,
+      username,
+      dob,
+      email,
+      password: hashPassword,
+    });
+    const exisitingUserName = await User.findOne({ username: username });
+    const exisitingEmail = await User.findOne({ email: email });
+    try {
+      if (!exisitingUserName && !exisitingEmail) {
+        const savedNewUser = await newUser.save();
+        res.status(200).json({
+          message: `New user, ${firstName}  ${lastName} was succesfully created successfully`,
+          success: true,
+          data: savedNewUser,
+        });
+      } else {
+        res.status(400).json({
+          message: "Incorrect username or password, please try again",
+          success: false,
+        });
+      }
+    } catch (err) {
+      res.status(500).json({
+        message: "cannot create User",
+        success: false,
+      });
+      console.log(err);
+    }
   }
 };
 
-export const signInUser = async (req: Request, res: Response, next:any) => {
+export const signInUser = async (req: Request, res: Response, next: any) => {
   const { username, password } = req.body.firstTimeUser;
-  const user = await User.findOne({ username: username });
-  const validateUser = await bcrypt.compare(password, user.password);
- 
-  try {
-    if (validateUser && user) {
-      const sessionUser = {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-      };
-      req.session.user = sessionUser;
-      return res.status(200).json({
-        message: "Log in Successful",
-        data: sessionUser,
-        success: true,
-      });
-    } else if (!validateUser || !user){
-      return res.status(400).json({
-        message: "User does not exist, Please sign up",
-        success: false,
-      });
-     
-    }
-  } catch (e) {
-    return res.status(500).json({
-      message: "Server error, please try again",
+  if (username === "" || password === "") {
+    res.status(404).json({
+      message: "One or more of the inputs are empty",
       success: false,
     });
+  } else {
+    const user = await User.findOne({ username: username });
+    const validateUser = await bcrypt.compare(password, user.password);
+
+    try {
+      if (validateUser && user) {
+        const sessionUser = {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        };
+        req.session.user = sessionUser;
+        return res.status(200).json({
+          message: "Log in Successful",
+          data: sessionUser,
+          success: true,
+        });
+      } else if (!validateUser || !user) {
+        return res.status(400).json({
+          message: "User does not exist, Please sign up",
+          success: false,
+        });
+      }
+    } catch (e) {
+      return res.status(500).json({
+        message: "Server error, please try again",
+        success: false,
+      });
+    }
   }
- 
 };
 
 export const logOutUser = async (req: Request, res: Response, next: any) => {
