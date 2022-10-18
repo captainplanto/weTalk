@@ -5,8 +5,10 @@ import LoginIcon from "@mui/icons-material/Login";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AvatarComponent from "../components/Avater.component";
-import { useEffect, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import { SearchComponent } from "../components/Search.component";
+import { Image } from "@nextui-org/react";
+import Loginjpg from "../../src/publics/login.jpg";
 export const Password = ({
   fill,
   size,
@@ -124,3 +126,39 @@ export const mobileNavBarNoSession = [
   { name: "LOGIN", path: "/login", id: 3, icon: <LoginIcon /> },
   { name: "REGISTER", path: "/register", id: 4, icon: <LockOpenIcon /> },
 ];
+
+
+interface IChild {
+  children: ReactNode;
+}
+export const LoginImageBoiler: FC<IChild> = ({ children }) => {
+  return (
+    <>
+      <Image
+        src={Loginjpg}
+        objectFit={"cover"}
+        height={"100vh"}
+        style={{ filter: "blur(8px)", position: "relative" }}
+      />
+      <div
+        style={{
+          backgroundColor: "var( --login-image-bg)",
+          position: "absolute",
+          top: 0,
+          width: "100vw",
+          height: "100vh",
+        }}
+      >
+        <div
+          style={{
+            display: "grid",
+            placeContent: "center",
+            height: "100%",
+          }}
+        >
+          {children}
+        </div>
+      </div>
+    </>
+  );
+};

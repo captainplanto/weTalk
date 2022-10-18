@@ -38,7 +38,7 @@ const App = () => {
     <AppContainer
       style={{
         backgroundColor: !toggleMode ? "rgb(36, 52, 71)" : "",
-        minHeight: "100vh",
+        height: "100vh",
       }}
     >
       {currentUser ? <ToggleComponent /> : ""}

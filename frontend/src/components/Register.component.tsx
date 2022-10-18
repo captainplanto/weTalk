@@ -16,11 +16,13 @@ import {
   createPassword,
   createUserName,
 } from "../redux/features/userprofile";
+
 interface ISignIn {
   signIn: boolean;
+  style?: object;
 }
 
-const RegisterComponent: FC<ISignIn> = ({ signIn }) => {
+const RegisterComponent: FC<ISignIn> = ({ signIn, style, ...props }) => {
   const { user } = useAppSelector((state) => state.profile);
   const createUserProfile = { ...user };
   const navigate = useNavigate();
@@ -79,11 +81,11 @@ const RegisterComponent: FC<ISignIn> = ({ signIn }) => {
     } catch (e) {}
   };
   return (
-    <Container>
+    <Container style={{ ...style }}>
       <Modal.Header>
-        <Text id="modal-title" size={18}>
+        <Text id="modal-title" size={18} color="white">
           Welcome to
-          <Text b size={18}>
+          <Text b size={18} color="white">
             WeTalk
           </Text>
         </Text>
@@ -103,7 +105,7 @@ const RegisterComponent: FC<ISignIn> = ({ signIn }) => {
                 size="lg"
                 placeholder="Firstname"
                 aria-label="firstname"
-                contentLeft={<Mail fill="currentColor" />}
+                contentLeft={<Mail fill="white" />}
                 name="firstName"
               />
 
@@ -117,9 +119,8 @@ const RegisterComponent: FC<ISignIn> = ({ signIn }) => {
                 size="lg"
                 placeholder="Lastname"
                 aria-label="lastname"
-                contentLeft={<Mail fill="currentColor" />}
+                contentLeft={<Mail fill="white" />}
                 name="lastName"
-             
               />
 
               <Input
@@ -131,9 +132,9 @@ const RegisterComponent: FC<ISignIn> = ({ signIn }) => {
                 onChange={(e) => dispatch(createDob(e.target.value))}
                 value={user.dob}
                 size="lg"
-                placeholder="dob"
+                //placeholder="dobllll"
                 aria-label="birthday"
-                contentLeft={<Mail fill="currentColor" />}
+                contentLeft={<Mail fill="white" />}
                 name="dob"
               />
               <Input
@@ -146,7 +147,7 @@ const RegisterComponent: FC<ISignIn> = ({ signIn }) => {
                 size="lg"
                 placeholder="Email"
                 aria-label="email"
-                contentLeft={<Mail fill="currentColor" />}
+                contentLeft={<Mail fill="white" />}
                 name="email"
               />
             </>
@@ -161,7 +162,7 @@ const RegisterComponent: FC<ISignIn> = ({ signIn }) => {
             size="lg"
             placeholder="Username"
             aria-label="username"
-            contentLeft={<Mail fill="currentColor" />}
+            contentLeft={<Mail fill="white" />}
             name="username"
           />
 
@@ -176,13 +177,17 @@ const RegisterComponent: FC<ISignIn> = ({ signIn }) => {
             placeholder="Password"
             name="password"
             aria-label="password"
-            contentLeft={<Password fill="currentColor" />}
+            contentLeft={<Password fill="white" />}
           />
           <Row justify="space-between">
             <Checkbox>
-              <Text size={14}>Remember me</Text>
+              <Text size={14} color="white">
+                Remember me
+              </Text>
             </Checkbox>
-            <Text size={14}>Forgot password?</Text>
+            <Text size={14} color="white">
+              Forgot password?
+            </Text>
           </Row>
         </Modal.Body>
 
@@ -204,12 +209,21 @@ const RegisterComponent: FC<ISignIn> = ({ signIn }) => {
 export default RegisterComponent;
 const Container = styled.div`
   margin: 0 auto;
-
   align-items: center;
-  max-width: 500px;
   .date_picker {
     border-radius: 100rem;
     padding: 5px;
-    background: red;
+  }
+
+  form {
+    width: 500px;
+    max-width: 90vw;
+    input {
+      color: white;
+      ::placeholder {
+        color: white;
+        font-style: italic;
+      }
+    }
   }
 `;
