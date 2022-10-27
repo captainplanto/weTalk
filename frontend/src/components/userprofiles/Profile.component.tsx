@@ -5,11 +5,10 @@ import { convertDate } from "../../utils/date";
 import PaperBackgroundComponent from "../Comments/PaperBackground.component";
 import TabComponent from "../Tabs.component";
 import ProfileTopicComponent from "./ProfileTopic.component";
-//import ProfileLikesComponent from "./ProfileLikes.component";
 import ProfileCommentComponent from "./ProfileComment.component";
 import { UploadImageComponent } from "./UploadImage.component";
 import { Loading } from "@nextui-org/react";
-import { ITopic, IUser } from "../../types/type";
+import { IUser } from "../../types/type";
 import { userProfileClickedInfo } from "../../redux/features/topics";
 import { setTopicsLikedByUser } from "../../redux/features/userprofile";
 import NavBarComponent from "../Navbar.component";
@@ -60,7 +59,6 @@ const ProfileComponent = () => {
    
       if (userCommentsOnTopics.status === 200) {
        const { message, success, data } = await userCommentsOnTopics.json();
-        console.log(data, "CommentsTopics");
         // dispatch(setTopicsLikedByUser(data))
       } else if (userLikesOnTopics.status === 400) {
         console.log(message, success);
@@ -152,36 +150,4 @@ const ProfileContainer = styled.div`
   }
 `;
 
-/*
 
-
-  const itemInStorage = localStorage.getItem("state");
-  const getItemInStorage = itemInStorage ? JSON.parse(itemInStorage) : "";
-
-  useEffect(() => {
-    if (getItemInStorage === true) {
-      dispatch(setUsernameClicked(true));
-    } else {
-      dispatch(setUsernameClicked(false));
-    }
-  }, []);
-
-
-
-
-
-
-  return (
-    <Loading
-      type="points-opacity"
-      size="xs"
-      style={{
-        alignItems: "center",
-        justifyContent: "center",
-        display: "flex",
-        height: "100vh",
-      }}
-    />
-  );
-
-*/

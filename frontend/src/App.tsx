@@ -14,7 +14,7 @@ import TopicComment from "./pages/topiccomment";
 import { ToggleSwitch } from "./redux/features/topics";
 import ProfileComponent from "./components/userprofiles/Profile.component";
 import { SearchResult } from "./pages/searchresult";
-import NavBarComponent from "./components/Navbar.component";
+
 import React from "react";
 
 const App = () => {

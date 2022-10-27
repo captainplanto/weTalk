@@ -5,14 +5,13 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { IComment, ITopic } from "../../types/type";
 import { convertDate } from "../../utils/date";
 import CardComponent from "../Card.component";
-import NavBarComponent from "../Navbar.component";
 import TextFieldComponent from "../TextField.component";
 import TopicReplyButtonComponent from "../TopicReplyButton.component";
 import PaperBackgroundComponent from "./PaperBackground.component";
 
 const CommentComponent = () => {
   const { databaseReplyTopic } = useAppSelector((state) => state.topic);
-  const { replyTopic, openReplyToBox } = useAppSelector((state) => state.topic);
+  const { replyTopic } = useAppSelector((state) => state.topic);
   const dispatch = useAppDispatch();
   const sessionId = localStorage.getItem("item");
   const sessionUser = sessionId ? JSON.parse(sessionId) : "";
