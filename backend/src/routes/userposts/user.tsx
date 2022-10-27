@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
   secure: true,
 });
 
-//Register User using has, bcrypt && salt
+//Register User using has, bcrypt && salt method.
 
 export const registerUser = async (req: Request, res: Response) => {
   const { firstName, lastName, username, dob, email, password } =
