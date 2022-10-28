@@ -10,11 +10,13 @@ require("dotenv").config();
 const app: Express = express();
 const adminPassword: any = process.env.DB_URI;
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: "https://we-talk-rho.vercel.app/",
   methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
   optionsSuccessStatus: 200,
   credentials: true,
 };
+//https://we-talk-rho.vercel.app/
+//http://localhost:3000
 const MongoDBStore = connectMongoDBSession(session);
 const store = new MongoDBStore({
   uri: adminPassword,
