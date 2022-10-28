@@ -9,7 +9,7 @@ require("dotenv").config();
 
 const app: Express = express();
 const adminPassword: any = process.env.DB_URI;
-const corsOptions = {
+/*const corsOptions = {
   origin: "https://we-talk-rho.vercel.app/",
   methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
   optionsSuccessStatus: 200,
@@ -17,6 +17,8 @@ const corsOptions = {
 };
 //https://we-talk-rho.vercel.app/
 //http://localhost:3000
+
+*/
 const MongoDBStore = connectMongoDBSession(session);
 const store = new MongoDBStore({
   uri: adminPassword,
@@ -38,7 +40,8 @@ const sessionOptions = {
 };
 app.set("trust proxy", 1);
 app.use(session(sessionOptions));
-app.use(cors(corsOptions));
+//(corsOptions)
+app.use(cors);
 app.use(express.json());
 
 app.use("/api", router);
