@@ -9,12 +9,15 @@ require("dotenv").config();
 
 const app: Express = express();
 const adminPassword: any = process.env.DB_URI;
+/*
 const corsOptions = {
   origin: "http://localhost:3000",
   methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
   optionsSuccessStatus: 200,
   credentials: true,
 };
+
+*/
 const MongoDBStore = connectMongoDBSession(session);
 const store = new MongoDBStore({
   uri: adminPassword,
@@ -36,7 +39,8 @@ const sessionOptions = {
 };
 app.set("trust proxy", 1);
 app.use(session(sessionOptions));
-app.use(cors(corsOptions));
+app.use(cors);
+//(corsOptions)
 app.use(express.json());
 
 app.use("/api", router);
