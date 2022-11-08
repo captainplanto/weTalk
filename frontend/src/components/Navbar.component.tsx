@@ -1,26 +1,21 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import styled from "styled-components";
-import {
-  mobileNavBarNoSession,
-  mobileNavBarSession,
-  noSessionNavBar,
-  sessionNavBar,
-} from "../constant/consts";
-import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { CurrentUserImage, SearchBar } from "../constant/consts";
+import { useSession } from "../pages/hooks/useSession";
+import { INavOptions, NavComponent } from "./Nav/Nav.component";
+import HomeIcon from "@mui/icons-material/Home";
+import SearchIcon from "@mui/icons-material/Search";
+import LoginIcon from "@mui/icons-material/Login";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { setMobileSearchBar } from "../redux/features/topics";
-import { ReactNode } from "react";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
-const NavBarComponent = () => {
-  const sessionId = localStorage.getItem("item");
+export const NavBarComponent = () => {
   const { mobileSearchBar } = useAppSelector((state) => state.topic);
   const dispatch = useAppDispatch();
-
-  const displayMobileSearchBar = () => {
-    dispatch(setMobileSearchBar(!mobileSearchBar));
-    localStorage.setItem('mobileSearchBox', JSON.stringify(mobileSearchBar))
-  };
+  const { session } = useSession();
+  const navigate = useNavigate();
 
   const handleLogOut = async () => {
     const logUserOut = await fetch("api/logout", {
@@ -39,115 +34,81 @@ const NavBarComponent = () => {
       toast.error("Logout impossible at this time");
     }
   };
+  const NavItemsDesktop: INavOptions[] = session && session._id ? [
+          { name: "HOME", id: 1, action:() => navigate("/")},
+          { name: <SearchBar />, id: 2 },
+          { name: "LOGOUT", id: 3, action: () => handleLogOut() },
+          {
+            name: "CREATE TOPIC",
+            id: 4,
+            action: () => navigate("/newtopic"),
+          },
+        ]
+      : [
+          { name: "HOME", id: 1, action: () => navigate("/") },
+          { name: <SearchBar />, id: 2 },
+          { name: "LOGIN", id: 3, action: () => navigate("/login") },
+          { name: "REGISTER", id: 4, action: () => navigate("/register") },
+        ];
 
-  const handleLogOutAndSearch = (id: number, name: string|ReactNode) => {
-    if (id === 2 && name === "SEARCH") {
-      return displayMobileSearchBar();
-    } else if (id === 3 && name === "LOGOUT") {
-      handleLogOut();
-    }
-  };
-  if (window.innerWidth > 500) {
-    return sessionId ? (
-      <Container>
-        {sessionNavBar.map(({ name, path, id }) => (
-          <ul key={id}>
-            <Link to={path}>
-              <li onClick={() => handleLogOutAndSearch(id, name)}>{name}</li>
-            </Link>
-          </ul>
-        ))}
-      </Container>
-    ) : (
-      <Container>
-        {noSessionNavBar.map(({ name, path, id }) => (
-          <ul key={id}>
-            <Link to={path}>
-              <li>{name}</li>
-            </Link>
-          </ul>
-        ))}
-      </Container>
-    );
-  } else {
-    return sessionId ? (
-      <MobileContainer>
-        <div className="sessionCss">
-          {mobileNavBarSession.map(({ name, path, id, icon }) => (
-            <ul key={id}>
-              <Link to={path}>
-                <li onClick={() => handleLogOutAndSearch(id, name)}>{icon}</li>
-                <p>{name}</p>
-              </Link>
-            </ul>
-          ))}
-        </div>
-        <Link to="/newtopic">
-          <div className="container">
-            <div className="create_topic_mobile">
-              <CreateRoundedIcon />
-            </div>
-          </div>
-        </Link>
-      </MobileContainer>
-    ) : (
-      <MobileContainer>
-        <div className="noSessionCss">
-          {mobileNavBarNoSession.map(({ name, path, id, icon }) => (
-            <ul key={id}>
-              <Link to={path}>
-                <li onClick={() => handleLogOutAndSearch(id, name)}>{icon}</li>
-                <p>{name}</p>
-              </Link>
-            </ul>
-          ))}
-        </div>
-      </MobileContainer>
-    );
-  }
+  const NavItemsMobile: INavOptions[] =session && session._id ? [
+          {
+            name: "HOME",
+            id: 1,
+            icon: <HomeIcon />,
+            action: () => navigate("/"),
+          },
+          {
+            name: "SEARCH",
+            id: 2,
+            icon: <SearchIcon />,
+            action: () => dispatch(setMobileSearchBar(!mobileSearchBar)),
+          },
+          {
+            name: "LOGOUT",
+            id: 3,
+            icon: <LogoutIcon />,
+            action: () => handleLogOut(),
+          },
+          {
+            name: "PROFILE",
+            id: 4,
+            icon: <CurrentUserImage />,
+            action: () => navigate("/profile"),
+          },
+        ]: [
+          {
+            name: "HOME",
+            id: 1,
+            icon: <HomeIcon />,
+            action: () => navigate("/"),
+          },
+          {
+            name: "SEARCH",
+            id: 2,
+            icon: <SearchIcon />,
+            action: () => dispatch(setMobileSearchBar(!mobileSearchBar)),
+          },
+          {
+            name: "LOGIN",
+            id: 3,
+            icon: <LoginIcon />,
+            action: () => navigate("/login"),
+          },
+          {
+            name: "REGISTER",
+            id: 4,
+            icon: <LockOpenIcon />,
+            action: () => navigate("/register"),
+          },
+        ];
+
+  return (
+    <>
+      <NavComponent option={NavItemsDesktop} showOnDesktop={true} />
+      <NavComponent option={NavItemsMobile} showOnDesktop={false} />
+    </>
+  );
 };
+
 export default NavBarComponent;
-const Container = styled.div`
-  width: 85%;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1.5fr 4fr repeat(2, 0.7fr);
-  grid-column-gap: 15px;
-  grid-row-gap: 0px;
-  margin-top:2rem;
-`;
-
-const MobileContainer = styled.div`
-  background: var(--light-grayish-blue);
-  z-index: 1000;
-  bottom: 0;
-  position: fixed;
-  width: 100%;
-  padding: 1rem;
-  text-align: center;
-  .sessionCss {
-    display: grid;
-    place-items: center;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-  }
-
-  .noSessionCss {
-    display: grid;
-    place-items: center;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-  }
-  .container {
-    display: flex;
-    justify-content: flex-end;
-  }
-  .create_topic_mobile {
-    display: grid;
-    place-items: center;
-    width: 4rem;
-    height: 4rem;
-    border-radius: 5rem;
-    position: fixed;
-    bottom: 10rem;
-    background-color: var(--moderate-blue);
-  }
-`;

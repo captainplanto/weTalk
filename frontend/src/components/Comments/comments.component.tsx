@@ -1,21 +1,37 @@
-import React from "react";
 import styled from "styled-components";
-import { replyToTopic } from "../../redux/features/topics";
+import { dbReplyTopic, replyToTopic } from "../../redux/features/topics";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { IComment, ITopic } from "../../types/type";
 import { convertDate } from "../../utils/date";
 import CardComponent from "../Card.component";
 import TextFieldComponent from "../TextField.component";
 import TopicReplyButtonComponent from "../TopicReplyButton.component";
-import PaperBackgroundComponent from "./PaperBackground.component";
+import PaperBackgroundComponent from "../PaperBackground.component";
+import { useSession } from "../../pages/hooks/useSession";
+import { useEffect } from "react";
 
 const CommentComponent = () => {
+  const { session } = useSession();
   const { databaseReplyTopic } = useAppSelector((state) => state.topic);
   const { replyTopic } = useAppSelector((state) => state.topic);
   const dispatch = useAppDispatch();
-  const sessionId = localStorage.getItem("item");
-  const sessionUser = sessionId ? JSON.parse(sessionId) : "";
-  const userPin = sessionUser.id;
+  const Topicid = localStorage.getItem("TID");
+  const value = Topicid ? JSON.parse(Topicid): '';
+  useEffect(() => {
+    try {
+      const data = async () => {
+        const fetchTopic = await fetch(`/api/reply/to/topic/${value}`, {
+          method: "GET",
+        });
+        const fetchReplyToTopicResponse = await fetchTopic.json();
+        dispatch(dbReplyTopic(fetchReplyToTopicResponse.data));
+      };
+      data();
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
   const handleReplyChange = (
     e:
       | React.ChangeEvent<HTMLTextAreaElement>
@@ -36,8 +52,8 @@ const CommentComponent = () => {
           topic={topic}
           username={author?.username ? author.username : ""}
           timestamp={`${convertDate(createdAt)} ago`}
-          remove={userPin === author?._id ? "Delete" : ""}
-          reply={userPin === author?._id ? "Edit" : ""}
+          remove={session && session._id === author?._id ? "Delete" : ""}
+          reply={session && session._id === author?._id ? "Edit" : ""}
           showTopicDeleteButton={true}
           showTopicReplyButton={false}
           topicOwner={username}
@@ -45,7 +61,6 @@ const CommentComponent = () => {
           isVoteOnTopic={true}
           image={author?.avatar}
           className={"homepage_paperbackground"}
-         
         />
 
         {comments && comments.length > 0 ? (
@@ -55,7 +70,7 @@ const CommentComponent = () => {
                 id={_id}
                 topic={reply}
                 username={author?.username}
-                remove={userPin === author?._id ? "Delete" : ""}
+                remove={session && session._id === author?._id ? "Delete" : ""}
                 timestamp={`${convertDate(createdAt)} ago`}
                 showTopicDeleteButton={false}
                 topicCommentID={topicID}
@@ -69,14 +84,12 @@ const CommentComponent = () => {
             </CommentContainer>
           ))
         ) : (
-          <>
-            <PaperBackgroundComponent className="homepage_paperbackground">
-              <h4>
-                No comments yet on this post. Be the first person to leave a
-                comment.
-              </h4>
-            </PaperBackgroundComponent>
-          </>
+          <PaperBackgroundComponent className="homepage_paperbackground">
+            <h4>
+              No comments yet on this post. Be the first person to leave a
+              comment.
+            </h4>
+          </PaperBackgroundComponent>
         )}
 
         <TextFieldComponent
@@ -106,4 +119,3 @@ const CommentContainer = styled.div`
   margin: 0 auto;
   width: 80%;
 `;
-// <h6>{`comments ${comments.length}`}</h6>

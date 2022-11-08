@@ -1,5 +1,6 @@
 import React, { FC} from "react";
 import { toast } from "react-toastify";
+import { useSession } from "../pages/hooks/useSession";
 import { dbReplyTopic, dbTopics, ReplyToTopicBox } from "../redux/features/topics";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { ITopicEditedButton } from "../types/type";
@@ -14,13 +15,14 @@ const TopicEditedButtonComponent: FC<ITopicEditedButton> = ({
 }) => {
   const { newtopic, openReplyToBox  } = useAppSelector((state) => state.topic);
   const dispatch = useAppDispatch(); 
-  const sessionId = localStorage.getItem("item");
-  const sessionUser = sessionId ? JSON.parse(sessionId) : "";
-  const currentUser = sessionUser.username;
+  const {session}= useSession();
+ // const sessionId = localStorage.getItem("item");
+  //const sessionUser = sessionId ? JSON.parse(sessionId) : "";
+  //const currentUser = sessionUser.username;
   const handleTopicCommentEdit = async (
     type: "EDIT_TOPIC" | "EDIT_COMMENT"
   ) => {
-    if (currentUser === topicOwner) {
+    if (session && session.username === topicOwner) {
       if (showTopicEditButton) {
         switch (type) {
           case "EDIT_TOPIC":

@@ -50,4 +50,7 @@ const TabContainer = styled.div`
     height: 1px;
     background: var(--moderate-blue);
   }
+  @media screen and (max-width: 820px) {
+    margin-top: 2rem;
+  }
 `;

@@ -4,7 +4,7 @@ import { FC} from "react";
 
 
 interface IAvatar {
-  src: string;
+  src?: string;
   id?: Schema.Types.ObjectId;
   username?: string;
 }
@@ -23,7 +23,7 @@ const AvatarComponent: FC<IAvatar> = ({ src, id, username, ...props }) => {
     return (
       <Grid.Container>
         <Grid>
-          <h4 style={no_avatar}>{username?.slice(0, 1)}</h4>
+          <div style={no_avatar}>{username?.slice(0, 1)}</div>
         </Grid>
       </Grid.Container>
     );
@@ -43,24 +43,3 @@ const no_avatar = {
 };
 
 
-/*
-
-
-  useEffect(() => {
-    const getUser = async () => {
-      const userInfo = await fetch(`/api/userprofile/${currentUser}`, {
-        method: "GET",
-      });
-      const userResponse = await userInfo.json();
-      dispatch(userProfileInfo(userResponse.data));
-    };
-
-    getUser();
-  }, []);
-
-
-
-
-
-
-*/

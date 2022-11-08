@@ -15,6 +15,7 @@ export const SearchComponent: FC<ISearch> = ({
   type,
   name,
   placeholder,
+
   ...props
 }) => {
   const { databaseTopics, query } = useAppSelector((state) => state.topic);
@@ -54,14 +55,26 @@ const Box = styled.div`
   display: flex;
   margin: 0 auto;
   justify-content: center;
-
+  position: absolute;
+  align-item: center;
+  left: 0;
+  right: 0;
   input {
-    padding: 8px 16rem 8px 1rem;
-    border-radius: 1rem;
+    padding: 1rem 16rem 1rem 1rem;
+    border-radius: 1.5rem;
     outline: none;
-    border: none;
+    background: var(--light-gray);
+    border: 0.5px solid rgba(0, 0, 0, 0.2);
     @media screen and (max-width: 500px) {
-      padding: 8px 10rem 8px 1rem;
+      padding: 1rem 10rem 1rem 1rem;
     }
+
+    ::placeholder {
+      font-style: italic;
+      font-size: 10px;
+    }
+  }
+  @media screen and (max-width: 500px) {
+    top: 3rem;
   }
 `;

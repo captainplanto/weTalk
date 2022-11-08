@@ -1,46 +1,51 @@
 import { Schema } from "mongoose";
-import React, { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import { customId } from "../App";
+import { useSession } from "../pages/hooks/useSession";
 
 interface IVote {
-  //topicId: Schema.Types.ObjectId;
-  //commentId:Schema.Types.ObjectId;
-  id:Schema.Types.ObjectId;
+  id: Schema.Types.ObjectId;
   isVoteOnTopic: boolean;
 }
-//topicId, commentId
-const VoteComponent: FC<IVote> = ({ id, isVoteOnTopic }) => {
-  //const [isVoteOnTopic, setIsVoteOnTopic] =useState<boolean>(true);
-  const sessionId = localStorage.getItem("item");
-  const sessionUser = sessionId ? JSON.parse(sessionId) : "";
-  const currentUser: Schema.Types.ObjectId = sessionUser.id;
-  const [votes, setVotes] = useState<any>();
 
+const VoteComponent: FC<IVote> = ({ id, isVoteOnTopic }) => {
+  const { session } = useSession();
+  const [topicVotes, setTopicVotes] = useState<Schema.Types.ObjectId[]>([]);
+  const [commentVotes, setCommentVotes] = useState<Schema.Types.ObjectId[]>([]);
   useEffect(() => {
-    const myVotes = async () => {
-      const getVotes = await fetch(`/api/get/vote/${id}`, {
+    const getTopicAndCommentVotes = async () => {
+      const getTopicVotes = await fetch(`/api/get/vote/on/topic/${id}`, {
         method: "GET",
       });
-      const upVoteResponse = await getVotes.json();
-      setVotes(upVoteResponse.data.votes);
+      const topicVoteResponse = await getTopicVotes.json();
+      setTopicVotes(topicVoteResponse.data?.votes);
+
+
+      const getCommentVotes = await fetch(`/api/get/vote/on/comment/${id}`, {
+        method: "GET",
+      });
+      const commentVoteResponse = await getCommentVotes.json();
+      setCommentVotes(commentVoteResponse.data?.votes);
     };
-    myVotes();
-  }, [id]);
+    
+    getTopicAndCommentVotes();
+  }, []);
 
   const renderVotes = useCallback(() => {
     const VoteHandler = async (type: "add" | "remove") => {
-      if (currentUser && isVoteOnTopic === true) {
+      if (session && session._id && isVoteOnTopic === true) {
         switch (type) {
           case "add":
-            const upVote = await fetch(`/api/upvotetopic/${id}`, {
+            const upVote = await fetch(`/api/vote/topic/${id}`, {
               method: "POST",
               headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
+                payload: "add",
               },
-              body: JSON.stringify({ increaseVote: currentUser }),
+              body: JSON.stringify({ increaseVote: session._id }),
             });
 
             if (upVote.status === 200) {
@@ -48,34 +53,35 @@ const VoteComponent: FC<IVote> = ({ id, isVoteOnTopic }) => {
                 method: "GET",
               });
               const upVoteResponse = await getVotes.json();
-              setVotes(upVoteResponse.data.votes);
+              setTopicVotes(upVoteResponse.data?.votes);
               toast.success("vote added");
-            }
-            if (upVote.status === 300) {
+            } else if (upVote.status === 300) {
               toast.error("You liked this topic already.");
-            }
-            if (upVote.status === 400) {
+            } else if (upVote.status === 400) {
               toast.error(
                 "Please login or register to vote and downvote this topic"
               );
+            } else {
+              toast.error("server error");
             }
             break;
 
           case "remove":
-            const downVote = await fetch(`/api/downvotetopic/${id}`, {
+            const downVote = await fetch(`/api/vote/topic/${id}`, {
               method: "POST",
               headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
+                  payload: "remove",
               },
-              body: JSON.stringify({ increaseVote: currentUser }),
+              body: JSON.stringify({ increaseVote: session._id }),
             });
             if (downVote.status === 200) {
-              const downVote = await fetch(`/api/get/vote/${id}`, {
+              const downVote = await fetch(`/api/get/vote/on/topic/${id}`, {
                 method: "GET",
               });
               const downVoteResponse = await downVote.json();
-              setVotes(downVoteResponse.data.votes);
+              setTopicVotes(downVoteResponse.data.votes);
               toast.error("You have downvoted this topic");
             }
 
@@ -94,16 +100,17 @@ const VoteComponent: FC<IVote> = ({ id, isVoteOnTopic }) => {
           default:
             break;
         }
-      } else if (currentUser && isVoteOnTopic === false) {
+      } else if (session && session._id && isVoteOnTopic === false) {
         switch (type) {
           case "add":
-            const upVote = await fetch(`/api/upvote/comment/${id}`, {
+            const upVote = await fetch(`/api/vote/comment/${id}`, {
               method: "POST",
               headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
+                  payload: "add",
               },
-              body: JSON.stringify({ increaseVote: currentUser }),
+              body: JSON.stringify({ increaseVote: session._id }),
             });
 
             if (upVote.status === 200) {
@@ -111,7 +118,7 @@ const VoteComponent: FC<IVote> = ({ id, isVoteOnTopic }) => {
                 method: "GET",
               });
               const upVoteResponse = await getVotes.json();
-              setVotes(upVoteResponse.data.votes);
+              setCommentVotes(upVoteResponse.data.votes);
               toast.success("vote added");
             }
             if (upVote.status === 300) {
@@ -125,20 +132,21 @@ const VoteComponent: FC<IVote> = ({ id, isVoteOnTopic }) => {
             break;
 
           case "remove":
-            const downVote = await fetch(`/api/downvote/comment/${id}`, {
+            const downVote = await fetch(`/api/vote/comment/${id}`, {
               method: "POST",
               headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
+                  payload: "remove",
               },
-              body: JSON.stringify({ increaseVote: currentUser }),
+              body: JSON.stringify({ increaseVote: session._id }),
             });
             if (downVote.status === 200) {
               const downVote = await fetch(`/api/get/vote/on/comment/${id}`, {
                 method: "GET",
               });
               const downVoteResponse = await downVote.json();
-              setVotes(downVoteResponse.data.votes);
+              setCommentVotes(downVoteResponse.data.votes);
               toast.error("You have downvoted this comment");
             }
 
@@ -167,15 +175,21 @@ const VoteComponent: FC<IVote> = ({ id, isVoteOnTopic }) => {
         <div className="vote_items">
           <div>
             <h5 onClick={() => VoteHandler("add")}>+</h5>
-            <h3 className="counter">
-              {votes && votes.length > 0 ? votes.length : "0"}
-            </h3>
+            {isVoteOnTopic ? (
+              <h3 className="counter">
+                {topicVotes && topicVotes.length > 0 ? topicVotes.length : "0"}
+              </h3>
+            ) : (
+              <h3 className="counter">
+                {commentVotes && commentVotes.length > 0 ? commentVotes.length: "0"}
+              </h3>
+            )}
             <h5 onClick={() => VoteHandler("remove")}>-</h5>
           </div>
         </div>
       </Vote>
     );
-  }, [currentUser, id, isVoteOnTopic, votes]);
+  }, [commentVotes, id, isVoteOnTopic, session, topicVotes]);
 
   return <> {renderVotes()}</>;
 };

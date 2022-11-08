@@ -1,5 +1,6 @@
 import React, {  useState } from "react";
 import { toast } from "react-toastify";
+import { useSession } from "../../pages/hooks/useSession";
 import { useAppSelector } from "../../redux/hooks";
 import { IUser } from "../../types/type";
 import AvaterComponent from "../Avater.component";
@@ -13,9 +14,10 @@ export const UploadImageComponent = ({
   const [image, setImage] = useState<any>();
   const [renderImage, setRenderImage] = useState<boolean>(false);
   const { usernameClicked } = useAppSelector((state) => state.profile);
-  const sessionid = localStorage.getItem("item");
-  const sessionUser = sessionid ? JSON.parse(sessionid) : "";
-  const currentUser = sessionUser.username;
+    const {session}= useSession();
+  //const sessionid = localStorage.getItem("item");
+  //const sessionUser = sessionid ? JSON.parse(sessionid) : "";
+  //const currentUser = sessionUser.username;
 
   const previewFiles = (file: any) => {
     const reader = new FileReader();
@@ -32,7 +34,7 @@ export const UploadImageComponent = ({
     e.preventDefault();
     try {
       const profileImage = await fetch(
-        `/api/upload/profile/image/${currentUser}`,
+        `/api/upload/profile/image/${session?.username}`,
         {
           method: "POST",
           headers: {

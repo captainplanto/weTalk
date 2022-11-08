@@ -1,8 +1,9 @@
 import React, { FC, ReactNode } from "react";
 import styled from "styled-components";
+import { useSession } from "../pages/hooks/useSession";
 import { useAppSelector } from "../redux/hooks";
-import PaperBackgroundComponent from "./Comments/PaperBackground.component";
-import { SearchComponent } from "./Search.component";
+import AvatarComponent from "./Avater.component";
+import PaperBackgroundComponent from "./PaperBackground.component";
 
 interface IInput {
   value?: string;
@@ -31,12 +32,19 @@ const TextFieldComponent: FC<IInput> = ({
   ...props
 }) => {
   const { openReplyToBox } = useAppSelector((state) => state.topic);
+  const { session } = useSession();
   return (
     <div>
       {openReplyToBox ? (
         <Outer style={{ marginTop: "1rem" }}>
           <PaperBackgroundComponent className="homepage_paperbackground">
             <Container>
+              {session && session.avatar ? (
+                <AvatarComponent src={session.avatar} />
+              ) : (
+               <AvatarComponent username={session?.username}/>
+              )}
+
               <div>
                 <textarea
                   value={value}
@@ -90,5 +98,8 @@ const Container = styled.div`
   @media screen and (max-width: 480px) {
     display: block;
     gap: 0px;
+  }
+  .nextui-c-kRHeuF-ijDEIix-css {
+    width: 1rem;
   }
 `;

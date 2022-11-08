@@ -1,14 +1,12 @@
 import { IRegister } from "../types/type";
-import HomeIcon from "@mui/icons-material/Home";
-import SearchIcon from "@mui/icons-material/Search";
-import LoginIcon from "@mui/icons-material/Login";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
-import LogoutIcon from "@mui/icons-material/Logout";
 import AvatarComponent from "../components/Avater.component";
 import { FC, ReactNode, useEffect, useState } from "react";
 import { SearchComponent } from "../components/Search.component";
 import { Image } from "@nextui-org/react";
 import Loginjpg from "../../src/publics/login.jpg";
+import { useSession } from "../pages/hooks/useSession";
+
+
 export const Password = ({
   fill,
   size,
@@ -53,21 +51,20 @@ export const Mail = ({ fill, size, height, width, ...props }: IRegister) => {
   );
 };
 export const TabContents = [
-  {id: 1,title: "Topics"},
-  {id: 2,title: "Comments"},
-  {id: 3,title: "Likes"},
+  { id: 1, title: "Topics" },
+  { id: 2, title: "Comments" },
+  { id: 3, title: "Likes" },
 ];
 
 export const CurrentUserImage = () => {
   const [avatar, setAvatar] = useState<string>("");
-  const sessionId = localStorage.getItem("item");
-  const sessionUser = sessionId ? JSON.parse(sessionId) : "";
-  const currentUser = sessionUser.username;
-
+  const { session } = useSession();
+  const username = session && session.username;
   useEffect(() => {
     try {
       const data = async () => {
-        const currentUserAvatar = await fetch(`/api/userprofile/${currentUser}`,{
+        const currentUserAvatar = await fetch(`/api/userprofile/${username}`,
+          {
             method: "GET",
           }
         );
@@ -81,52 +78,23 @@ export const CurrentUserImage = () => {
   }, []);
   return (
     <div>
-      <AvatarComponent
-        src={avatar ? avatar : ""}
-        username={currentUser.username}
-      />
+      <AvatarComponent src={session && session.avatar && session.avatar } username= {session && session.avatar ===undefined ? session.username: ''} />
     </div>
   );
 };
 
 export const SearchBar = () => {
+  
   return (
-    <SearchComponent
-      type="text"
-      name={"search"}
-      placeholder={"Find topic here"}
-    />
+    <>
+      <SearchComponent
+        type="text"
+        name="search"
+        placeholder="Find topic here"
+      />
+    </>
   );
 };
-
-export const noSessionNavBar = [
-  { name: "HOME", path: "/", id: 1 },
-   {name: (<SearchBar />),path: "#", id: 2},
-  { name: "LOGIN", path: "/login", id: 3 },
-  { name: "REGISTER", path: "/register", id: 4 },
-];
-
-export const sessionNavBar = [
-  { name: "HOME", path: "/", id: 1 },
-  {name: (<SearchBar />),path: "#", id: 2},
-  { name: "LOGOUT", path: "/", id: 3 },
-  { name: "CREATE TOPIC", path: "/newtopic", id: 4 },
-];
-
-export const mobileNavBarSession = [
-  { name: "HOME", path: "/", id: 1, icon: <HomeIcon /> },
-  { name: "SEARCH", path: "#", id: 2, icon: <SearchIcon /> },
-  { name: "LOGOUT", path: "/login", id: 3, icon: <LogoutIcon /> },
-  { name: "PROFILE", path: "/currentuser", id: 4, icon: <CurrentUserImage /> },
-];
-
-export const mobileNavBarNoSession = [
-  { name: "HOME", path: "/", id: 1, icon: <HomeIcon /> },
-  { name: "SEARCH", path: "#", id: 2, icon: <SearchIcon /> },
-  { name: "LOGIN", path: "/login", id: 3, icon: <LoginIcon /> },
-  { name: "REGISTER", path: "/register", id: 4, icon: <LockOpenIcon /> },
-];
-
 
 interface IChild {
   children: ReactNode;

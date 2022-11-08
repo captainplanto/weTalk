@@ -5,19 +5,17 @@ import { ITopic } from "../types/type";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import CardComponent from "./Card.component";
 import { convertDate } from "../utils/date";
-import PaperBackgroundComponent from "./Comments/PaperBackground.component";
+import PaperBackgroundComponent from "./PaperBackground.component";
+import { useSession } from "../pages/hooks/useSession";
 
 const TopicsComponent = () => {
   const { databaseTopics } = useAppSelector((state) => state.topic);
   const dispatch = useAppDispatch();
-  const sessionId = localStorage.getItem("item");
-  const sessionUser = sessionId ? JSON.parse(sessionId) : "";
-  const currentUser = sessionUser.id;
-  
+   const {session}= useSession();
   useEffect(() => {
     try {
       const data = async () => {
-        const fetchTopic = await fetch("/api/gettopic", {
+        const fetchTopic = await fetch("/api/get/topic", {
           method: "GET",
         });
         const fetchTopicResponse = await fetchTopic.json();
@@ -32,15 +30,16 @@ const TopicsComponent = () => {
   const topicLists = useCallback(() => {
     return (
       <OuterContainer>
+      
         {databaseTopics && databaseTopics.length > 0 ? (
           databaseTopics.map(
             ({ topic, _id, createdAt, author, username }: ITopic, index) => (
               <div key={index} className="all-posts">
                 <CardComponent
                   username={author?.username}
-                  remove={currentUser === author?._id ? "Delete" : ""}
-                  reply={"Reply"}
-                  edit={currentUser === author?._id ? "Edit" : ""}
+                  remove={session && session._id === author?._id ? "Delete" : ""}
+                  reply="Reply"
+                  edit={session && session._id === author?._id ? "Edit" : ""}
                   topic={topic}
                   timestamp={`${convertDate(createdAt)} ago`}
                   id={_id}
@@ -49,8 +48,10 @@ const TopicsComponent = () => {
                   topicOwner={author?.username}
                   showTopicEditButton={true}
                   image={author.avatar}
-                    userId={author._id}
-                  isVoteOnTopic={true} className={"homepage_paperbackground"} />
+                  userId={author._id}
+                  isVoteOnTopic={true}
+                  className={"homepage_paperbackground"}
+                />
               </div>
             )
           )
@@ -63,7 +64,7 @@ const TopicsComponent = () => {
         )}
       </OuterContainer>
     );
-  }, [currentUser, databaseTopics]);
+  }, [databaseTopics, session]);
 
   return <>{topicLists()}</>;
 };
@@ -92,6 +93,7 @@ const OuterContainer = styled.div`
   }
 `;
 const no_post = {
+  width: "20%",
   color: "var(--moderate-blue)",
   textAlign: "center",
 };

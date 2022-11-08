@@ -1,12 +1,10 @@
-
-import React, { FC } from "react";
+import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { dbReplyTopic } from "../redux/features/topics";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { ITopicReplyButton } from "../types/type";
 import CustomButtonComponent from "./CustomButton.component";
-
 const TopicReplyButtonComponent: FC<ITopicReplyButton> = ({
   id,
   showTopicReplyButton,
@@ -16,45 +14,40 @@ const TopicReplyButtonComponent: FC<ITopicReplyButton> = ({
 }) => {
   const { replyTopic } = useAppSelector((state) => state.topic);
   const dispatch = useAppDispatch();
-    const navigate = useNavigate();
-  const ReplyToTopicOrAddComment = async (type: "GETTOPICANDCOMMENT" | "REPLYTOTOPIC") => {
-   
+  const navigate = useNavigate();
+
+  const ReplyToTopicOrAddComment = async (type: "REPLY" | "POST-REPLY") => {
+      localStorage.setItem("TID", JSON.stringify(id));
     if (showTopicReplyButton === false) {
       switch (type) {
-        case "GETTOPICANDCOMMENT":
+        case "REPLY":
           try {
-            const fetchTopicAndComment = await fetch(`/api/gettopicreply/${id}`, {
-                method: "POST",
-                headers: {
-                  Accept: "application/json",
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ IncomingTopicID: id }),
-              }
+            const fetchTopicAndComment = await fetch(
+              `/api/reply/to/topic/${id}`,
+              { method: "GET" }
             );
             if (fetchTopicAndComment.status === 200) {
-                  navigate("/topiccomment");
-              const fetchReplyToTopicResponse = await fetchTopicAndComment.json();
-             dispatch(dbReplyTopic(fetchReplyToTopicResponse.data));
-            } 
-            else {
+              navigate("/topiccomment");
+              const fetchReplyToTopicResponse =
+                await fetchTopicAndComment.json();
+              dispatch(dbReplyTopic(fetchReplyToTopicResponse.data));
+            } else {
               console.log("error here");
             }
           } catch (err) {}
+          navigate("/topiccomment");
           break;
         default:
           break;
       }
-    } else if (showTopicReplyButton === true) {
+    } else {
       switch (type) {
-        case "REPLYTOTOPIC":
+        case "POST-REPLY":
           try {
-      
-            const replyTopicRequest = await fetch(`/api/replytotopic/${id}`, {
+            const replyTopicRequest = await fetch(`/api/reply/to/topic/${id}`, {
               method: "POST",
               headers: {
                 Accept: "application/json",
-               // credentials : "include",
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({ TopicResponse: replyTopic }),
@@ -62,38 +55,43 @@ const TopicReplyButtonComponent: FC<ITopicReplyButton> = ({
 
             if (replyTopicRequest.status === 200) {
               toast.success("You successfully reply to this topic");
-              const fetchReplyToTopic = await fetch(`/api/gettopicreply/${id}`,{
-                  method: "POST",
+              const fetchReplyToTopic = await fetch(
+                `/api/reply/to/topic/${id}`,
+                {
+                  method: "GET",
                 }
               );
               const fetchReplyToTopicResponse = await fetchReplyToTopic.json();
               dispatch(dbReplyTopic(fetchReplyToTopicResponse.data));
-            }
-            else if (replyTopicRequest.status === 400) {
+            } else if (replyTopicRequest.status === 400) {
               toast.error("Please login or register to perform this action");
             }
           } catch (error) {}
-            break;
+          break;
 
         default:
           break;
       }
     }
   };
-  if (!showTopicReplyButton) {
+
+  if (showTopicReplyButton) {
     return (
-      <div onClick={() => ReplyToTopicOrAddComment("GETTOPICANDCOMMENT")}  className={className}>
-        {children}
+      <div>
+        <CustomButtonComponent
+          onClick={() => ReplyToTopicOrAddComment("POST-REPLY")}
+        >
+          {children}
+        </CustomButtonComponent>
       </div>
     );
   } else {
     return (
-      <div>
-        <CustomButtonComponent
-          onClick={() => ReplyToTopicOrAddComment("REPLYTOTOPIC")} 
-        >
-          {children}
-        </CustomButtonComponent>
+      <div
+        onClick={() => ReplyToTopicOrAddComment("REPLY")}
+        className={className}
+      >
+        {children}
       </div>
     );
   }
@@ -102,5 +100,3 @@ const TopicReplyButtonComponent: FC<ITopicReplyButton> = ({
 export default TopicReplyButtonComponent;
 
 // I am chaining the replyto topic and fetch topic and comments button togehter here...This is to make the code readable and easy editing
-
-

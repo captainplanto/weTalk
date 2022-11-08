@@ -1,45 +1,30 @@
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import PaperBackgroundComponent from "./Comments/PaperBackground.component";
+import PaperBackgroundComponent from "./PaperBackground.component";
 import CardComponent from "./Card.component";
 import { convertDate } from "../utils/date";
 import { ITopic } from "../types/type";
-import { setMobileSearchBar, setQuerySearch } from "../redux/features/topics";
+import {  setQuerySearch } from "../redux/features/topics";
 import { useEffect } from "react";
-import { SearchComponent } from "./Search.component";
+import { useSession } from "../pages/hooks/useSession";
 
 export const SearchResultComponent = () => {
-  const { querySearchResult, mobileSearchBar  } = useAppSelector((state) => state.topic);
-
+  const { querySearchResult } = useAppSelector(
+    (state) => state.topic
+  );
   const dispatch = useAppDispatch();
-  const sessionId = localStorage.getItem("item");
-  const sessionUser = sessionId ? JSON.parse(sessionId) : "";
-  const currentUser = sessionUser.id;
+  const { session } = useSession();
+
   useEffect(() => {
     const getQueryString = localStorage.getItem("queryString");
     const result = getQueryString ? JSON.parse(getQueryString) : [];
     dispatch(setQuerySearch(result));
 
-    const getShowSearch = localStorage.getItem("mobileSearchBox");
-    const response = getShowSearch ? JSON.parse(getShowSearch) : "";
-    if (response) {
-      dispatch(setMobileSearchBar(response));
-    } else {
-      dispatch(setMobileSearchBar(!response));
-    }
   }, []);
 
   return (
-      <>
-        {mobileSearchBar ? (
-        <SearchComponent
-          type={"text"}
-          name={"search"}
-          placeholder={"Find topic here"}
-        />
-      ) : (
-        ""
-      )}
+  
     <div style={{ marginTop: "4rem", marginBottom: "4rem" }}>
+     
       {querySearchResult && querySearchResult.length > 0 ? (
         querySearchResult.map(
           ({ topic, _id, createdAt, author, username }: ITopic, index) => (
@@ -50,9 +35,9 @@ export const SearchResultComponent = () => {
             >
               <CardComponent
                 username={author?.username}
-                remove={currentUser === author?._id ? "Delete" : ""}
+                remove={session && session._id === author?._id ? "Delete" : ""}
                 reply={"Reply"}
-                edit={currentUser === author?._id ? "Edit" : ""}
+                edit={session && session._id === author?._id ? "Edit" : ""}
                 topic={topic}
                 timestamp={`${convertDate(createdAt)} ago`}
                 id={_id}
@@ -76,7 +61,6 @@ export const SearchResultComponent = () => {
         </h5>
       )}
     </div>
-    </>
   );
 };
 
@@ -84,3 +68,6 @@ const no_post = {
   color: "var(--moderate-blue)",
   textAlign: "center",
 };
+
+
+

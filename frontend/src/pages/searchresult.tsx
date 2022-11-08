@@ -1,15 +1,15 @@
-import styled from "styled-components";
+
+import { LayOut } from "../components/layout/layout.component";
 
 import { SearchResultComponent } from "../components/SearchResult.component";
 
 export const SearchResult = () => {
   return (
-    <Container>
-    
+     <LayOut>
       <SearchResultComponent  />
-    </Container>
+     </LayOut>
   );
 };
 
 
-const Container = styled.div``;
+

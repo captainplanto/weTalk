@@ -48,23 +48,16 @@ const App = () => {
       />
 
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/register" element={<RegisterUser />} />
         <Route path="/login" element={<LoginUser />} />
         <Route path="/logout" element={<LoginUser />} />
+        <Route path="/alltopic" element={<AllTopics />} />
+        <Route path="/newtopic" element={<NewTopic />} />
+        <Route path="/searchresult" element={<SearchResult />} />
+        <Route path="/profile" element={<ProfileComponent />} />
+        <Route path="/topiccomment" element={<TopicComment />} />
       </Routes>
-
-      <React.Fragment>
-        {currentUser ? <ToggleComponent /> : ""}
-       
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/alltopic" element={<AllTopics />} />
-          <Route path="/newtopic" element={<NewTopic />} />
-          <Route path="/searchresult" element={<SearchResult />} />
-          <Route path="/profile" element={<ProfileComponent />} />
-          <Route path="/topiccomment" element={<TopicComment />} />
-        </Routes>
-      </React.Fragment>
     </AppContainer>
   );
 };
@@ -72,3 +65,4 @@ const App = () => {
 export default App;
 export const customId = "custom-id-yes";
 const AppContainer = styled.div``;
+// {currentUser ? <ToggleComponent /> : ""}

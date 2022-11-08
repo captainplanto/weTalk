@@ -1,11 +1,11 @@
-import React, { FC,    useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import styled from "styled-components";
 import AvaterComponent from "./Avater.component";
 import VoteComponent from "./Vote.component";
-import { createTopic } from "../redux/features/topics";
-import { useAppDispatch} from "../redux/hooks";
+import { createTopic, dbReplyTopic } from "../redux/features/topics";
+import { useAppDispatch } from "../redux/hooks";
 import TopicDeleteButtonComponent from "./Comments/TopicDeleteButton.component";
-import PaperBackgroundComponent from "./Comments/PaperBackground.component";
+import PaperBackgroundComponent from "./PaperBackground.component";
 import { Schema } from "mongoose";
 import TextFieldComponent from "./TextField.component";
 import TopicEditedButtonComponent from "./TopicEditedButton.component";
@@ -14,8 +14,7 @@ import DropdownComponent from "./Dropdown.Component";
 import { Dropdown } from "@nextui-org/react";
 import icon from "../publics/menu-vertical.png";
 import UserNameClickHandler from "./UsernameClick.component";
-
-
+import { useSession } from "../pages/hooks/useSession";
 
 interface ICard {
   avatar?: string;
@@ -38,7 +37,7 @@ interface ICard {
   topicOwner?: string;
   isVoteOnTopic: boolean;
   paperBackground?: string;
-  userId?:any;
+  userId?: any;
 }
 
 const CardComponent: FC<ICard> = ({
@@ -58,19 +57,18 @@ const CardComponent: FC<ICard> = ({
   showTopicEditButton,
   topicCommentID,
   id,
-   userId,
+  userId,
   topicOwner,
   isVoteOnTopic,
   paperBackground,
   ...props
 }) => {
   const dispatch = useAppDispatch();
-  const sessionId = localStorage.getItem("item");
-  const sessionUser = sessionId ? JSON.parse(sessionId) : "";
-  const currentUser = sessionUser.username;
+  const { session } = useSession();
   const [openUpdateTextBox, setopenUpdateTextBox] = useState(true);
+
   const handleTextBoxOpen = () => {
-    if (currentUser === topicOwner) {
+    if (session && session.username === topicOwner) {
       setopenUpdateTextBox(!openUpdateTextBox);
     } else {
       console.log("not your own");
@@ -84,7 +82,7 @@ const CardComponent: FC<ICard> = ({
     e.preventDefault();
     dispatch(createTopic(e.target.value));
   };
-//repeat(5, 1fr)
+
   return (
     <>
       <PaperBackgroundComponent className={className}>
@@ -111,7 +109,9 @@ const CardComponent: FC<ICard> = ({
           )}
 
           <div className="username">
-            <UserNameClickHandler _id={ userId  ? userId : ''}>{username}</UserNameClickHandler>
+            <UserNameClickHandler _id={userId ? userId : ""}>
+              {username}
+            </UserNameClickHandler>
           </div>
 
           <div className="timestamp">{timestamp}</div>
@@ -205,14 +205,11 @@ const CardComponent: FC<ICard> = ({
 };
 
 export default CardComponent;
-// grid-template-columns: repeat(6, 1fr);
-//  grid-template-rows: repeat(1, 1fr);
 const CardContainer = styled.div<{ show?: boolean }>`
   display: grid;
   align-items: center;
-  grid-template-columns:0.6fr 0.4fr 0.9fr repeat(3, 1fr);
+  grid-template-columns: 0.6fr 0.4fr 0.9fr repeat(3, 1fr);
 
- 
   grid-row-gap: 6px;
   .vote_component {
     grid-area: 1 / 1 / 3 / 2;

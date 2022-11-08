@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { ITopic } from "../../types/type";
 import { convertDate } from "../../utils/date";
 import CardComponent from "../Card.component";
-//import PaperBackgroundComponent from "../Comments/PaperBackground.component";
+
 
 interface IClickProfile {
   clickedUserTopics?: ITopic[];

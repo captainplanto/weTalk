@@ -20,6 +20,7 @@
   --dark-blue: hsl(212, 24%, 26%);
   --grayish-blue: hsl(211, 10%, 45%);
   --login-image-bg: hsl(212, 24%, 26%, 0.6);
+  --header-background: rgba(20%, 25%, 32%, 0.6);
 }
 
 html,
