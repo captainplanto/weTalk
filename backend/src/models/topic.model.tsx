@@ -3,6 +3,7 @@ import { ITopic } from "../types/types";
 
 const topicSchema = new Schema<ITopic>(
   {
+   
     topic: {
       type: String,
       required: true,
@@ -26,6 +27,7 @@ const topicSchema = new Schema<ITopic>(
     },
   },
   { timestamps: true }
+ 
 );
 
 const Topic = mongoose.model<ITopic>("Topic", topicSchema);

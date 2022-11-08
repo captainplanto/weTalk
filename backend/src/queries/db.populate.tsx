@@ -6,12 +6,17 @@ export const TOPIC_MODEL_COMMENT = {
   path: "comments",
   model: CommentModel,
   select: "reply votes author _id",
+  populate: {
+    path: "author",
+    model: UserModel,
+    select: "username firstName lastName avatar",
+  }
 };
 
 export const TOPIC_MODEL_AUTHOR = {
   path: "author",
   model: UserModel,
-  select: "username firstName lastName avatar dob email _id",
+  select: "username firstName lastName avatar timestamps",
 };
 
 export const USER_TOPICS_MODEL = {

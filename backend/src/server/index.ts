@@ -8,22 +8,19 @@ import { router } from "../routes/route";
 require("dotenv").config();
 
 const app: Express = express();
-const adminPassword: any = process.env.DB_URI;
-/*const corsOptions = {
-  origin: "https://we-talk-rho.vercel.app/",
+const adminPassword: string =process.env.DB_URI;
+const corsOptions = {
+  origin: "http://localhost:3000",
   methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
   optionsSuccessStatus: 200,
   credentials: true,
 };
-//https://we-talk-rho.vercel.app/
-//http://localhost:3000
 
-*/
 const MongoDBStore = connectMongoDBSession(session);
 const store = new MongoDBStore({
   uri: adminPassword,
   collection: "sessions",
-  // expires: 1000,
+   //expires: 1000,
 });
 const sessionOptions = {
   name: "session-id",
@@ -40,10 +37,8 @@ const sessionOptions = {
 };
 app.set("trust proxy", 1);
 app.use(session(sessionOptions));
-//(corsOptions)
-app.use(cors);
+app.use(cors(corsOptions));
 app.use(express.json());
-
 app.use("/api", router);
 
 const PORT = process.env.PORT || 5000;

@@ -1,85 +1,84 @@
-import express, { Request, Response } from "express";
+import { Request, Response } from "express";
 import Topic from "../../models/topic.model";
 import Comment from "../../models/comment.model";
 
-// The votes component for the Topic created.
-//.$where({votes: sessionId,});
-export const upVoteTopic = async (req: Request, res: Response) => {
+// The votes component for the Topics created.
+export const voteTopic = async (req: Request, res: Response) => {
+  const PAYLOAD = req.headers.payload;
   const topicId = req.params.id;
   const sessionId = req.body.increaseVote;
-  const findVoteOnTopic = await Topic.findOne({ _id: topicId })
-  try {
-    if (req.session.user.id) {
-      if (!findVoteOnTopic) {
-        const upVoteTopic = await Topic.findByIdAndUpdate(
-          topicId,
-          { $push: { votes: sessionId } },
-          { upsert: true }
-        );
-
-        res.status(200).json({
-          message: "Topic successfully upvoted",
-          success: true,
-        });
-      } else if (findVoteOnTopic) {
-        res.status(300).json({
-          message: "You liked this topic already",
+  const checkForVote = await Topic.findById(topicId);
+  const findVoteOnTopic = checkForVote.votes.includes(sessionId);
+  if (PAYLOAD === "add") {
+    try {
+      if (req.session.user._id) {
+        if (!findVoteOnTopic) {
+          const upVoteTopic = await Topic.findByIdAndUpdate(
+            topicId,
+            { $push: { votes: sessionId } },
+            { upsert: true }
+          );
+          res.status(200).json({
+            message: "Topic successfully upvoted",
+            success: true,
+          });
+        } else if (findVoteOnTopic) {
+          res.status(300).json({
+            message: "You liked this topic already",
+            success: false,
+          });
+        }
+      } else {
+        res.status(400).json({
+          message:
+            "Cannot vote Topic at this time, please login or register to vote",
           success: false,
         });
       }
-    } else {
-      res.status(400).json({
-        message:
-          "Cannot vote Topic at this time, please login or register to vote",
+    } catch (e) {
+      res.status(500).json({
+        message: "Server error....",
+        e,
         success: false,
       });
     }
-  } catch (e) {
-    res.status(500).json({
-      message: "Server error....",
-      e,
-      success: false,
-    });
-  }
-};
-
-export const downVoteTopic = async (req: Request, res: Response) => {
-  const topicId = req.params.id;
-  const sessionId = req.body.increaseVote;
-  const findVoteOnTopic = await Topic.findById(topicId, { votes: sessionId });
-  try {
-    if (req.session.user.id) {
-      if (findVoteOnTopic) {
-        const downVote = await Topic.findByIdAndUpdate(topicId, {
-          $pull: { votes: sessionId },
-        });
-        res.status(200).json({
-          message: "Topic successfully down-voted",
-          success: true,
-        });
-      } else if (!findVoteOnTopic) {
-        res.status(300).json({
-          message: "You downvoted this topic already",
+  } else if (PAYLOAD === "remove") {
+    try {
+      if (req.session.user._id) {
+        if (findVoteOnTopic) {
+          const downVote = await Topic.findByIdAndUpdate(topicId, {
+            $pull: { votes: sessionId },
+          });
+          res.status(200).json({
+            message: "Topic successfully down-voted",
+            success: true,
+          });
+        } else if (!findVoteOnTopic) {
+          res.status(300).json({
+            message: "You downvoted this topic already",
+            success: false,
+          });
+        }
+      } else {
+        res.status(400).json({
+          message:
+            "Cannot down vote Topic at this time, please login or register to vote",
           success: false,
         });
       }
-    } else {
-      res.status(400).json({
-        message:
-          "Cannot down vote Topic at this time, please login or register to vote",
+    } catch (e) {
+      res.status(500).json({
+        message: "Server error....",
+        e,
         success: false,
       });
     }
-  } catch (e) {
-    res.status(500).json({
-      message: "Server error....",
-      e,
-      success: false,
-    });
+  } else {
+    return;
   }
 };
 
-export const getUpVoteTopic = async (req: Request, res: Response) => {
+export const getVoteOnTopic = async (req: Request, res: Response) => {
   const topicId = req.params.id;
   const getVotesOnTopic = await Topic.findById(topicId);
   try {
@@ -105,89 +104,71 @@ export const getUpVoteTopic = async (req: Request, res: Response) => {
 };
 
 // The votes component for the Comment created.
-export const upVoteComment = async (req: Request, res: Response) => {
+export const voteComment = async (req: Request, res: Response) => {
+  const PAYLOAD = req.headers.payload;
   const commentId = req.params.id;
   const sessionId = req.body.increaseVote;
+  const checkForVote = await Comment.findById(commentId);
+  const findVoteOnComment = checkForVote.votes.includes(sessionId);
   const session = req.session.user;
-  const findVoteOnComment = await Comment.findOne({_id:commentId})
-  //.$where({votes: sessionId,});
-  try {
-    if (session) {
-      if (!findVoteOnComment) {
-        const upVoteComment = await Comment.findByIdAndUpdate(
-          commentId,
-          { $push: { votes: sessionId } },
-          { upsert: true }
-        );
+  if (session && session._id) {
+    try {
+      if (PAYLOAD === "add") {
+        if (!findVoteOnComment) {
+          const upVoteComment = await Comment.findByIdAndUpdate(
+            commentId,
+            { $push: { votes: sessionId } },
+            { upsert: true }
+          );
 
-        res.status(200).json({
-          message: "Comment successfully upvoted",
-          success: true,
-        });
-      } else if (findVoteOnComment) {
-        res.status(300).json({
-          message: "You liked this comment already",
-          success: false,
-        });
+          res.status(200).json({
+            message: "Comment successfully up-voted",
+            success: true,
+          });
+        } else if (findVoteOnComment) {
+          res.status(300).json({
+            message: "You liked this comment already",
+            success: false,
+          });
+        }
+      } else if (PAYLOAD === "remove") {
+        if (findVoteOnComment) {
+          const downVote = await Comment.findByIdAndUpdate(commentId, {
+            $pull: { votes: sessionId },
+          });
+          res.status(200).json({
+            message: "Comment successfully down-voted",
+            success: true,
+          });
+        } else if (!findVoteOnComment) {
+          res.status(300).json({
+            message: "You downvoted this comment already",
+            success: false,
+          });
+        } else {
+          res.status(400).json({
+            message: "You downvoted this comment already",
+            success: false,
+          });
+        }
+      } else {
+        return;
       }
-    } else {
-      res.status(400).json({
-        message:
-          "Cannot vote Comment at this time, please login or register to vote",
-        success: false,
-      });
+    } catch (error) {
+      return error;
     }
-  } catch (e) {
+  } else {
     res.status(500).json({
-      message: "Server error....",
-      e,
+      message:
+        "Cannot vote Comment at this time, please login or register to vote",
       success: false,
     });
   }
 };
 
-export const downVoteComment = async (req: Request, res: Response) => {
-  const commentId = req.params.id;
-  const sessionId = req.body.increaseVote;
-  const findVoteOnComment = await Comment.findById(commentId, {
-    votes: sessionId,
-  });
-  try {
-    if (req.session.user.id) {
-      if (findVoteOnComment) {
-        const downVote = await Comment.findByIdAndUpdate(commentId, {
-          $pull: { votes: sessionId },
-        });
-        res.status(200).json({
-          message: "Comment successfully down-voted",
-          success: true,
-        });
-      } else if (!findVoteOnComment) {
-        res.status(300).json({
-          message: "You downvoted this comment already",
-          success: false,
-        });
-      }
-    } else {
-      res.status(400).json({
-        message:
-          "Cannot down vote Comment at this time, please login or register to vote",
-        success: false,
-      });
-    }
-  } catch (e) {
-    res.status(500).json({
-      message: "Server error....",
-      e,
-      success: false,
-    });
-  }
-};
-
-export const getUpVoteComment = async (req: Request, res: Response) => {
+export const getVoteOnComment = async (req: Request, res: Response) => {
   const commentId = req.params.id;
   const getVotesOnComment = await Comment.findById(commentId);
-
   try {
     if (getVotesOnComment) {
       res.status(200).json({

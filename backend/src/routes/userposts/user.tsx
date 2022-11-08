@@ -96,11 +96,12 @@ export const signInUser = async (req: Request, res: Response, next: any) => {
     try {
       if (validateUser && user) {
         const sessionUser = {
-          id: user._id,
+          _id: user._id,
           username: user.username,
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
+          avatar:user.avatar,
         };
         req.session.user = sessionUser;
         return res.status(200).json({
@@ -148,7 +149,7 @@ export const logOutUser = async (req: Request, res: Response, next: any) => {
 };
 
 export const registerUserInfo = async (req: Request, res: Response) => {
-  const { username } = req.params;
+  const username  = req.params.username;
   const findUserProfile = await User.findOne({ username });
   if (findUserProfile) {
     try {

@@ -41,7 +41,7 @@ export const AuthenticateUser = async (
 export const createTopic = async (req: Request, res: Response) => {
   const topic = req.body.createTopic;
   const userTopic = new Topic({ topic: topic });
-  const sessionId = req.session.user.id;
+  const sessionId = req.session.user._id;
   userTopic.author = sessionId;
   try {
     if (sessionId) {
@@ -139,14 +139,15 @@ export const deleteUserTopic = async (req: Request, res: Response) => {
   }
 };
 
-export const createReplyToTopic = async (req: Request, res: Response) => {
+export const replyToTopic = async (req: Request, res: Response) => {
   const topicToReplyToId = req.params.id;
   const reply = req.body.TopicResponse;
+  const method = req.method;
   const session = req.session.user;
-  if (session) {
+  if (session && method === "POST") {
     try {
       const createReply = new Comment({ reply: reply });
-      createReply.author = session.id;
+      createReply.author = session._id;
       const saveReply = await createReply.save();
       const saveReplyToTopic = await Topic.findByIdAndUpdate(
         topicToReplyToId,
@@ -159,27 +160,77 @@ export const createReplyToTopic = async (req: Request, res: Response) => {
         { $push: { comments: createReply } },
         { upsert: true }
       );
-
       return res.status(200).json({
-        message: "Reply successfully created",
+        message: "Your comment to this topic was successfully created",
         success: true,
-        data: saveReplyToTopic,
       });
     } catch (e) {
-      res.status(500).json({
-        message: "Reply to post cannot be created into database",
+      res.status(400).json({
+        message:
+          "cannot create comment to this topic at this time, please try again later.",
         e,
         success: false,
       });
     }
+  } else if (session && method === "GET") {
+    try {
+      const getTopicAndComments = await Topic.findById(topicToReplyToId)
+        .populate(TOPIC_MODEL_COMMENT)
+        .populate(TOPIC_MODEL_AUTHOR)
+        .exec();
+      console.log(getTopicAndComments);
+      return res.status(200).json({
+        message: "Your comment to this topic was successfully created",
+        success: true,
+        data: getTopicAndComments,
+      });
+    } catch (error) {
+      res.status(400).json({
+        message: " Cannot fetch comments at this time, try again later;",
+        error,
+        success: false,
+      });
+    }
   } else {
-    res.status(400).json({
+    res.status(500).json({
       message: "Log in or create account to comment or reply to a post",
       success: true,
     });
     console.log("error");
   }
 };
+
+/*
+export const getReplyToTopic = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const dbReplyTopics = await Topic.findById(id)
+    .populate(TOPIC_MODEL_COMMENT)
+    .populate(TOPIC_MODEL_AUTHOR);
+  //.exec();
+
+  try {
+    if (dbReplyTopics) {
+      res.status(200).json({
+        message: "All saved Comments successfully fetched from database",
+        success: true,
+        data: dbReplyTopics,
+      });
+    } else {
+      res.status(400).json({
+        message: "No reply created yet",
+        success: false,
+      });
+    }
+  } catch (e) {
+    res.status(500).json({
+      message:
+        "Cannot fetched topics from database at this time, please try again....",
+      e,
+      success: false,
+    });
+  }
+};
+*/
 
 export const editUserComment = async (req: Request, res: Response) => {
   const id = req.params.id;
@@ -205,35 +256,6 @@ export const editUserComment = async (req: Request, res: Response) => {
   }
 };
 
-export const getReplyToTopic = async (req: Request, res: Response) => {
-  const id = req.params.id;
-  const dbReplyTopics = await Topic.findById(id)
-    .populate(TOPIC_MODEL_COMMENT)
-    .populate(TOPIC_MODEL_AUTHOR)
-    .exec();
-  try {
-    if (dbReplyTopics) {
-      res.status(200).json({
-        message: "All saved Comments successfully fetched from database",
-        success: true,
-        data: dbReplyTopics,
-      });
-    } else {
-      res.status(400).json({
-        message: "No reply created yet",
-        success: false,
-      });
-    }
-  } catch (e) {
-    res.status(500).json({
-      message:
-        "Cannot fetched topics from database at this time, please try again....",
-      e,
-      success: false,
-    });
-  }
-};
-
 export const deleteUserCommentOnATopic = async (
   req: Request,
   res: Response
@@ -241,7 +263,7 @@ export const deleteUserCommentOnATopic = async (
   const commentToDeleteId = req.params.id;
   const topicToRemoveCommentFrom = req.body.topicID;
   try {
-    if (req.session.user.id) {
+    if (req.session.user._id) {
       const deleteCommentOnTopic = await Topic.findByIdAndUpdate(
         topicToRemoveCommentFrom,
         {

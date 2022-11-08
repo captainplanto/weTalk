@@ -9,23 +9,20 @@ import {
 import {
   allCommentedTopicByUser,
   allLikedTopicByUser,
-  createReplyToTopic,
   createTopic,
   deleteUserCommentOnATopic,
   deleteUserTopic,
   editUserComment,
   editUserTopic,
-  getReplyToTopic,
   getTopic,
+  replyToTopic,
   userData,
 } from "./userposts/topic";
 import {
-  downVoteComment,
-  downVoteTopic,
-  getUpVoteComment,
-  getUpVoteTopic,
-  upVoteComment,
-  upVoteTopic,
+  getVoteOnComment,
+  getVoteOnTopic,
+  voteComment,
+  voteTopic,
 } from "./userposts/votes";
 import { CloudinaryMiddleware } from "../cloudinary/index";
 
@@ -37,29 +34,26 @@ router.get("/userprofile/:username", registerUserInfo);
 
 //SignIN Users
 router.post("/signin", signInUser);
-//router.get("/signin", signInUser);
 //SignOut Users
 router.post("/logout", logOutUser);
 
 //Create, Read, Update, Delete Topic
 router.post("/createtopic", createTopic);
-router.get("/gettopic", getTopic);
+router.get("/get/topic", getTopic);
 router.put("/edittopic/:id", editUserTopic);
-router.delete("/deletetopic/:id", deleteUserTopic);
+router.delete("/delete/topic/:id", deleteUserTopic);
 
 //upVote && DownVote Topics && get TopicVotes from DB.
-router.post("/upvotetopic/:id", upVoteTopic);
-router.post("/downvotetopic/:id", downVoteTopic);
-router.get("/get/vote/:id", getUpVoteTopic);
+router.post("/vote/topic/:id", voteTopic);
+router.get("/get/vote/on/topic/:id", getVoteOnTopic);
 
 //upVote && DownVote Comments && get CommentVotes from DB.
-router.post("/upvote/comment/:id", upVoteComment);
-router.post("/downvote/comment/:id", downVoteComment);
-router.get("/get/vote/on/comment/:id", getUpVoteComment);
+router.post("/vote/comment/:id", voteComment);
+router.get("/get/vote/on/comment/:id", getVoteOnComment);
 
 //Create, Read, Update, Delete CommentsOnTopic.
-router.post("/replytotopic/:id", createReplyToTopic);
-router.post("/gettopicreply/:id", getReplyToTopic);
+router.post("/reply/to/topic/:id", replyToTopic);
+router.get("/reply/to/topic/:id", replyToTopic);
 router.put("/edittopiccomment/:id", editUserComment);
 
 //delete comments on topic endpoint
@@ -74,7 +68,5 @@ router.post(
 
 //get userData
 router.get("/user/topics/:id", userData);
-
 router.get("/user/topics/comments/:id", allCommentedTopicByUser);
-
 router.get("/user/topics/likes/:id", allLikedTopicByUser);

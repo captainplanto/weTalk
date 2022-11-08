@@ -27,7 +27,7 @@ export interface ITopic {
   topic: string;
   comments: IComment[];
   author: { [key: string]: any; };
-  votes: number;
+  votes: Schema.Types.ObjectId[];
   updatedTopic?: string;
 }
 
