@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppState } from "../store";
 import { IDbcomments } from "../../types/type";
+import { Schema } from "mongoose";
 
 const initialState: IDbcomments = {
   databaseTopics: [],
@@ -14,6 +15,7 @@ const initialState: IDbcomments = {
   querySearchResult: [],
   query: "",
   mobileSearchBar:false,
+  commentVotes:[],
 };
 
 export const topicSlice = createSlice({
@@ -58,6 +60,9 @@ export const topicSlice = createSlice({
      setMobileSearchBar: (state, action: PayloadAction<boolean>) => {
       state.mobileSearchBar= action.payload;
     },
+     setCommentVotes: (state, action: PayloadAction<[]>) => {
+      state.commentVotes= action.payload;
+    },
   },
 });
 
@@ -72,7 +77,8 @@ export const {
   setQuerySearch,
   setQuery,
   loginState,
-  setMobileSearchBar
+  setMobileSearchBar,
+  setCommentVotes
 } = topicSlice.actions;
 export const topic = (state: AppState) => state.topic;
 export default topicSlice.reducer;

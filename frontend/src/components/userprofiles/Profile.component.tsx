@@ -19,7 +19,7 @@ const ProfileComponent = () => {
   const { topicsLikedByUser } = useAppSelector((state) => state.profile);
   const { currentTab } = useAppSelector((state) => state.profile);
   const dispatch = useAppDispatch();
-  const {id}= useParams();
+  const { id } = useParams();
   useEffect(() => {
     const fetchUserClickObject = async () => {
       const userObject = await fetch(`/api/user/topics/${id}`, {
@@ -32,12 +32,9 @@ const ProfileComponent = () => {
         console.log("error fetching user-details from database");
       }
 
-      const userLikesOnTopics = await fetch(
-        `/api/user/topics/likes/${id}`,
-        {
-          method: "GET",
-        }
-      );
+      const userLikesOnTopics = await fetch(`/api/user/topics/likes/${id}`, {
+        method: "GET",
+      });
       const { message, success, data } = await userLikesOnTopics.json();
       if (userLikesOnTopics.status === 200) {
         dispatch(setTopicsLikedByUser(data));
@@ -56,7 +53,7 @@ const ProfileComponent = () => {
         const { message, success, data } = await userCommentsOnTopics.json();
         // dispatch(setTopicsLikedByUser(data))
       } else if (userLikesOnTopics.status === 400) {
-        console.log(message, success);
+        console.log(message, success, "here");
       }
     };
 
@@ -70,43 +67,43 @@ const ProfileComponent = () => {
 
     return (
       <>
-       <LayOut>
-        <ProfileContainer>
-          <div>
-            <UploadImageComponent username={username} avatar={avatar} />
-            <ul>
-              <li>{`${firstName} ${lastName}`}</li>
-              <li style={{ color: "var(--main-blue)" }}>@{username}</li>
-              <li>{`Born ${dob}`}</li>
-              <div className="email_joined">
-                <li>{email}</li>
-                <li>Joined {createdAt ? convertDate(createdAt) : ""} ago</li>
-              </div>
-            </ul>
-          </div>
+        <LayOut>
+          <ProfileContainer>
+            <div>
+              <UploadImageComponent username={username} avatar={avatar} />
+              <ul>
+                <li>{`${firstName} ${lastName}`}</li>
+                <li style={{ color: "var(--main-blue)" }}>@{username}</li>
+                <li>{`Born ${dob}`}</li>
+                <div className="email_joined">
+                  <li>{email}</li>
+                  <li>Joined {createdAt ? convertDate(createdAt) : ""} ago</li>
+                </div>
+              </ul>
+            </div>
 
-          <div>
-            <TabComponent />
-            {currentTab === 1 ? (
-              <ProfileTopicComponent clickedUserTopics={topics} />
-            ) : currentTab === 2 ? (
-              <ProfileCommentComponent />
-            ) : currentTab === 3 ? (
-              <ProfileTopicComponent
-                topicsLikedByClickedUser={topicsLikedByUser}
-              />
-            ) : (
-              <ProfileTopicComponent clickedUserTopics={topics} />
-            )}
-          </div>
-          {/*<PaperBackgroundComponent className="profile_paper">
+            <div>
+              <TabComponent />
+              {currentTab === 1 ? (
+                <ProfileTopicComponent clickedUserTopics={topics} />
+              ) : currentTab === 2 ? (
+                <ProfileCommentComponent />
+              ) : currentTab === 3 ? (
+                <ProfileTopicComponent
+                  topicsLikedByClickedUser={topicsLikedByUser}
+                />
+              ) : (
+                <ProfileTopicComponent clickedUserTopics={topics} />
+              )}
+            </div>
+            {/*<PaperBackgroundComponent className="profile_paper">
           <h6> Anthony Awoniyi </h6>
           <h6> Anthony Awoniyi </h6>
           <h6> Anthony Awoniyi </h6>
           <h6> Anthony Awoniyi </h6>
           <h6> Anthony Awoniyi </h6>
         </PaperBackgroundComponent>*/}
-        </ProfileContainer>
+          </ProfileContainer>
         </LayOut>
       </>
     );
@@ -127,13 +124,13 @@ const ProfileContainer = styled.div`
     display: block;
     margin-top: 2rem;
 
-  ul {
-    .email_joined {
-      display: flex;
-      justify-content: space-between;
+    ul {
+      .email_joined {
+        display: flex;
+        justify-content: space-between;
+      }
     }
   }
-    }
   .profile_paper {
     max-height: 30rem;
     @media screen and (max-width: 820px) {

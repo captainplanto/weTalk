@@ -1,11 +1,10 @@
 import { IRegister } from "../types/type";
 import AvatarComponent from "../components/Avater.component";
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode } from "react";
 import { SearchComponent } from "../components/Search.component";
 import { Image } from "@nextui-org/react";
 import Loginjpg from "../../src/publics/login.jpg";
 import { useSession } from "../pages/hooks/useSession";
-
 
 export const Password = ({
   fill,
@@ -57,34 +56,21 @@ export const TabContents = [
 ];
 
 export const CurrentUserImage = () => {
-  const [avatar, setAvatar] = useState<string>("");
   const { session } = useSession();
-  const username = session && session.username;
-  useEffect(() => {
-    try {
-      const data = async () => {
-        const currentUserAvatar = await fetch(`/api/userprofile/${username}`,
-          {
-            method: "GET",
-          }
-        );
-        const currrentUserAvatarResponse = await currentUserAvatar.json();
-        setAvatar(currrentUserAvatarResponse.data.avatar);
-      };
-      data();
-    } catch (err) {
-      console.log(err);
-    }
-  }, []);
+
   return (
     <div>
-      <AvatarComponent src={session && session.avatar && session.avatar } username= {session && session.avatar ===undefined ? session.username: ''} />
+      <AvatarComponent
+        src={session && session.avatar && session.avatar}
+        username={
+          session && session.avatar === undefined ? session.username : ""
+        }
+      />
     </div>
   );
 };
 
 export const SearchBar = () => {
-  
   return (
     <>
       <SearchComponent

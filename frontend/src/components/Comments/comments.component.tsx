@@ -1,5 +1,8 @@
 import styled from "styled-components";
-import { dbReplyTopic, replyToTopic } from "../../redux/features/topics";
+import {
+  dbReplyTopic,
+  replyToTopic,
+} from "../../redux/features/topics";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { IComment, ITopic } from "../../types/type";
 import { convertDate } from "../../utils/date";
@@ -16,7 +19,7 @@ const CommentComponent = () => {
   const { databaseReplyTopic } = useAppSelector((state) => state.topic);
   const { replyTopic } = useAppSelector((state) => state.topic);
   const dispatch = useAppDispatch();
-  const {id} = useParams();
+  const { id } = useParams();
 
   useEffect(() => {
     try {
@@ -27,6 +30,7 @@ const CommentComponent = () => {
         const fetchReplyToTopicResponse = await fetchTopic.json();
         dispatch(dbReplyTopic(fetchReplyToTopicResponse.data));
       };
+
       data();
     } catch (err) {
       console.log(err);

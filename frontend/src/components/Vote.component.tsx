@@ -14,6 +14,7 @@ const VoteComponent: FC<IVote> = ({ id, isVoteOnTopic }) => {
   const { session } = useSession();
   const [topicVotes, setTopicVotes] = useState<Schema.Types.ObjectId[]>([]);
   const [commentVotes, setCommentVotes] = useState<Schema.Types.ObjectId[]>([]);
+
   useEffect(() => {
     const getTopicAndCommentVotes = async () => {
       const getTopicVotes = await fetch(`/api/get/vote/on/topic/${id}`, {
@@ -22,14 +23,13 @@ const VoteComponent: FC<IVote> = ({ id, isVoteOnTopic }) => {
       const topicVoteResponse = await getTopicVotes.json();
       setTopicVotes(topicVoteResponse.data?.votes);
 
-
       const getCommentVotes = await fetch(`/api/get/vote/on/comment/${id}`, {
         method: "GET",
       });
       const commentVoteResponse = await getCommentVotes.json();
       setCommentVotes(commentVoteResponse.data?.votes);
     };
-    
+
     getTopicAndCommentVotes();
   }, []);
 
@@ -72,7 +72,7 @@ const VoteComponent: FC<IVote> = ({ id, isVoteOnTopic }) => {
               headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                  payload: "remove",
+                payload: "remove",
               },
               body: JSON.stringify({ increaseVote: session._id }),
             });
@@ -108,7 +108,7 @@ const VoteComponent: FC<IVote> = ({ id, isVoteOnTopic }) => {
               headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                  payload: "add",
+                payload: "add",
               },
               body: JSON.stringify({ increaseVote: session._id }),
             });
@@ -119,6 +119,7 @@ const VoteComponent: FC<IVote> = ({ id, isVoteOnTopic }) => {
               });
               const upVoteResponse = await getVotes.json();
               setCommentVotes(upVoteResponse.data.votes);
+
               toast.success("vote added");
             }
             if (upVote.status === 300) {
@@ -137,7 +138,7 @@ const VoteComponent: FC<IVote> = ({ id, isVoteOnTopic }) => {
               headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                  payload: "remove",
+                payload: "remove",
               },
               body: JSON.stringify({ increaseVote: session._id }),
             });
@@ -147,6 +148,7 @@ const VoteComponent: FC<IVote> = ({ id, isVoteOnTopic }) => {
               });
               const downVoteResponse = await downVote.json();
               setCommentVotes(downVoteResponse.data.votes);
+
               toast.error("You have downvoted this comment");
             }
 
@@ -181,7 +183,9 @@ const VoteComponent: FC<IVote> = ({ id, isVoteOnTopic }) => {
               </h3>
             ) : (
               <h3 className="counter">
-                {commentVotes && commentVotes.length > 0 ? commentVotes.length: "0"}
+                {commentVotes && commentVotes.length > 0
+                  ? commentVotes.length
+                  : "0"}
               </h3>
             )}
             <h5 onClick={() => VoteHandler("remove")}>-</h5>

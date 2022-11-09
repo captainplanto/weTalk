@@ -49,6 +49,7 @@ export interface IDbcomments {
   querySearchResult:ITopic[];
   query:string;
   mobileSearchBar:boolean;
+  commentVotes:Schema.Types.ObjectId[];
 }
 
 export interface IRegister {

@@ -11,7 +11,8 @@ import { useSession } from "../pages/hooks/useSession";
 const TopicsComponent = () => {
   const { databaseTopics } = useAppSelector((state) => state.topic);
   const dispatch = useAppDispatch();
-   const {session}= useSession();
+  const { session } = useSession();
+  console.log(databaseTopics);
   useEffect(() => {
     try {
       const data = async () => {
@@ -21,6 +22,7 @@ const TopicsComponent = () => {
         const fetchTopicResponse = await fetchTopic.json();
         dispatch(dbTopics(fetchTopicResponse.data));
       };
+
       data();
     } catch (err) {
       console.log(err);
@@ -30,14 +32,15 @@ const TopicsComponent = () => {
   const topicLists = useCallback(() => {
     return (
       <OuterContainer>
-      
         {databaseTopics && databaseTopics.length > 0 ? (
           databaseTopics.map(
             ({ topic, _id, createdAt, author, username }: ITopic, index) => (
               <div key={index} className="all-posts">
                 <CardComponent
                   username={author?.username}
-                  remove={session && session._id === author?._id ? "Delete" : ""}
+                  remove={
+                    session && session._id === author?._id ? "Delete" : ""
+                  }
                   reply="Reply"
                   edit={session && session._id === author?._id ? "Edit" : ""}
                   topic={topic}
