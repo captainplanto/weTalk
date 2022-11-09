@@ -4,7 +4,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/home";
-import { ToggleComponent } from "./components/Toggle.component";
+//import { ToggleComponent } from "./components/Toggle.component";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import RegisterUser from "./pages/register";
 import LoginUser from "./pages/login";
@@ -16,11 +16,10 @@ import ProfileComponent from "./components/userprofiles/Profile.component";
 import { SearchResult } from "./pages/searchresult";
 
 import React from "react";
+//import { useSession } from "./pages/hooks/useSession";
 
 const App = () => {
-  const sessionId = localStorage.getItem("item");
-  const sessionUser = sessionId ? JSON.parse(sessionId) : "";
-  const currentUser = sessionUser.id;
+ // const {session} = useSession();
   const { toggleMode } = useAppSelector((state) => state.topic);
   const dispatch = useAppDispatch();
 
@@ -55,8 +54,8 @@ const App = () => {
         <Route path="/alltopic" element={<AllTopics />} />
         <Route path="/newtopic" element={<NewTopic />} />
         <Route path="/searchresult" element={<SearchResult />} />
-        <Route path="/profile" element={<ProfileComponent />} />
-        <Route path="/topiccomment" element={<TopicComment />} />
+        <Route path="/profile/:id" element={<ProfileComponent />} />
+        <Route path="/topiccomment/:id" element={<TopicComment />} />
       </Routes>
     </AppContainer>
   );
@@ -65,4 +64,4 @@ const App = () => {
 export default App;
 export const customId = "custom-id-yes";
 const AppContainer = styled.div``;
-// {currentUser ? <ToggleComponent /> : ""}
+// {session._id ? <ToggleComponent /> : ""}

@@ -12,18 +12,17 @@ import { userProfileClickedInfo } from "../../redux/features/topics";
 import { setTopicsLikedByUser } from "../../redux/features/userprofile";
 
 import { LayOut } from "../layout/layout.component";
+import { useParams } from "react-router-dom";
 
 const ProfileComponent = () => {
   const { userProfileClicked } = useAppSelector((state) => state.topic);
   const { topicsLikedByUser } = useAppSelector((state) => state.profile);
   const { currentTab } = useAppSelector((state) => state.profile);
   const dispatch = useAppDispatch();
-  const renderUserTopicOnload = localStorage.getItem("usernameClicked");
-  const userNameClicked = renderUserTopicOnload ? JSON.parse(renderUserTopicOnload): "";
-
+  const {id}= useParams();
   useEffect(() => {
     const fetchUserClickObject = async () => {
-      const userObject = await fetch(`/api/user/topics/${userNameClicked}`, {
+      const userObject = await fetch(`/api/user/topics/${id}`, {
         method: "GET",
       });
       if (userObject.status === 200) {
@@ -34,7 +33,7 @@ const ProfileComponent = () => {
       }
 
       const userLikesOnTopics = await fetch(
-        `/api/user/topics/likes/${userNameClicked}`,
+        `/api/user/topics/likes/${id}`,
         {
           method: "GET",
         }
@@ -47,7 +46,7 @@ const ProfileComponent = () => {
       }
 
       const userCommentsOnTopics = await fetch(
-        `/api/user/topics/comments/${userNameClicked}`,
+        `/api/user/topics/comments/${id}`,
         {
           method: "GET",
         }

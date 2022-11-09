@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
 import { toast } from "react-toastify";
 import { dbReplyTopic } from "../redux/features/topics";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -14,10 +14,7 @@ const TopicReplyButtonComponent: FC<ITopicReplyButton> = ({
 }) => {
   const { replyTopic } = useAppSelector((state) => state.topic);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-
   const ReplyToTopicOrAddComment = async (type: "REPLY" | "POST-REPLY") => {
-      localStorage.setItem("TID", JSON.stringify(id));
     if (showTopicReplyButton === false) {
       switch (type) {
         case "REPLY":
@@ -27,7 +24,7 @@ const TopicReplyButtonComponent: FC<ITopicReplyButton> = ({
               { method: "GET" }
             );
             if (fetchTopicAndComment.status === 200) {
-              navigate("/topiccomment");
+           
               const fetchReplyToTopicResponse =
                 await fetchTopicAndComment.json();
               dispatch(dbReplyTopic(fetchReplyToTopicResponse.data));
@@ -35,7 +32,6 @@ const TopicReplyButtonComponent: FC<ITopicReplyButton> = ({
               console.log("error here");
             }
           } catch (err) {}
-          navigate("/topiccomment");
           break;
         default:
           break;
@@ -87,12 +83,13 @@ const TopicReplyButtonComponent: FC<ITopicReplyButton> = ({
     );
   } else {
     return (
-      <div
+      <Link
+        to={`/topiccomment/${id}`}
         onClick={() => ReplyToTopicOrAddComment("REPLY")}
         className={className}
       >
         {children}
-      </div>
+      </Link>
     );
   }
 };

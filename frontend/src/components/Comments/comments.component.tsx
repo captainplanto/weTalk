@@ -9,18 +9,19 @@ import TopicReplyButtonComponent from "../TopicReplyButton.component";
 import PaperBackgroundComponent from "../PaperBackground.component";
 import { useSession } from "../../pages/hooks/useSession";
 import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 const CommentComponent = () => {
   const { session } = useSession();
   const { databaseReplyTopic } = useAppSelector((state) => state.topic);
   const { replyTopic } = useAppSelector((state) => state.topic);
   const dispatch = useAppDispatch();
-  const Topicid = localStorage.getItem("TID");
-  const value = Topicid ? JSON.parse(Topicid): '';
+  const {id} = useParams();
+
   useEffect(() => {
     try {
       const data = async () => {
-        const fetchTopic = await fetch(`/api/reply/to/topic/${value}`, {
+        const fetchTopic = await fetch(`/api/reply/to/topic/${id}`, {
           method: "GET",
         });
         const fetchReplyToTopicResponse = await fetchTopic.json();
